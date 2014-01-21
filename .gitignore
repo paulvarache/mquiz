@@ -2,3 +2,4 @@ composer.json
 composer.phar
 app/cache/*
 app/logs/*
+audio/*
