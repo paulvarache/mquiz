@@ -1,0 +1,4 @@
+<li id="{{user.id}}" >
+	<a href="#" class="thumbnail avatar">{{{user.avatar}}}</a>
+	<p>{{user.pseudo}}</p>
+</li>

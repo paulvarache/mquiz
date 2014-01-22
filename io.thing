@@ -1,0 +1,78 @@
+//this func checks every second if the number of players is sufficent to continue.
+setInterval(function(){
+	if(!app.locals.mServer.hasEnoughPlayers()){
+		io.sockets.emit('not-enough-player');
+		app.locals.mServer = new game.MServer(2);
+	}
+}, 1000);
+
+
+io.sockets.on('connection', function(socket){
+	var me;
+	socket.on('login', function(user){
+		me = user;
+		me.id = uuid.v1();
+		me.points = 0;
+		me.founds = '';
+		if(me.gravatar != ''){
+			me.avatar = 'http://www.gravatar.com/avatar/'+crypto.createHash('md5').update(me.gravatar).digest('hex');
+		}
+		socket.emit('logged', me.id, mServer.getSonglist());
+		var users = app.locals.mServer.getUsers();
+		app.locals.mServer.addUser(me);
+	});
+	socket.on('disconnect', function(){
+		if(!me) return;
+		app.locals.mServer.removeUser(me);
+		io.sockets.emit('disusr', me.id);
+	});
+	socket.on('ready', function(){
+		me.ready = true;
+		if(app.locals.mServer.allUsersReady()){
+			app.locals.mServer.setStatus('next-song');
+			io.sockets.emit('next-song');
+			setTimeout(function(){
+				io.sockets.emit('play', app.locals.mServer.getCurrentSongIndex());
+				app.locals.mServer.setStatus('playing');
+			}, 5000);
+		}
+	});
+	socket.on('stop', function(answer, user_id){
+		/*
+		* Premier appel de STOP, le serveur est au statut 'playing'. On change le statut en 'waiting-answer'
+		* et on emmet le signal stop a tous les utilisateurs.
+		 */
+		if(app.locals.mServer.getStatus != 'waiting-answer'){
+			app.locals.mServer.setStatus('waiting-answer');
+			io.sockets.emit('stop', me);
+		}
+		/*
+		* Si on a une réponse, on la vérifie, sinon on attends la suite.
+		* Lorsque la chanson est trouvée, soit c'est la fin de la partie, soit on passe a la suivante.
+		 */
+		if(answer.response != ''){
+			if(app.locals.mServer.checkResponse(answer.response)){
+				me.points++;
+				console.log(app.locals.mServer.getUsers());
+				me.founds += app.locals.mServer.getCurrentSong();
+				io.sockets.emit('winner', me);
+				app.locals.mServer.setStatus('next-song');
+				if(app.locals.mServer.isLastSong()){
+					io.sockets.emit('game-end', app.locals.mServer.getUsers());
+				}else{
+					app.locals.mServer.nextSong();
+					io.sockets.emit('next-song');
+					setTimeout(function(){
+						io.sockets.emit('play', app.locals.mServer.getCurrentSongIndex());
+						}, 5000);
+				}
+			}
+		}
+	});
+	socket.on('end-response', function(){
+		if(app.locals.mServer.getStatus() == 'waiting-answer'){
+			io.sockets.emit('continue');
+			app.locals.mServer.setStatus('playing');
+		}
+	});
+});

@@ -1,0 +1,20 @@
+<h2>Fin de la partie</h2>
+<table class="table tablesorter" id='score-table'>
+    <thead>
+        <tr>
+            <th>Joueur</th>
+            <th>Score</th>
+            <th>Titres trouvés</th>
+        </tr>
+    </thead>
+    <tbody id='score-table-body'>
+        {{#users}}
+            <tr>
+                <td>{{pseudo}}</td>
+                <td>{{points}}</td>
+                <td>{{{founds}}}</td>
+            </tr>
+        {{/users}}
+    </tbody>
+</table>
+<button type='button' id='replay'>Rejouer</button>
