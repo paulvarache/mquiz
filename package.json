@@ -11,6 +11,8 @@
     "socket.io" : "*",
     "uuid" : "*",
     "levenshtein" : "*",
-    "crypto" : "*"
+    "crypto" : "*",
+    "mongodb": "*",
+    "mongoose" : "*"
   }
 }

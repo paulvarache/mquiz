@@ -20,7 +20,7 @@ exports.users = function(req, res){
  * GET song list.
  */
 exports.songlist = function(req, res){
-	var songs = req.app.locals.mServer.getPlaylistArray();
+	var songs = req.app.locals.mServer.getSonglist();
 	return res.render('partials/songs', {songs: songs});
 }
 

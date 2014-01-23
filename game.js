@@ -1,17 +1,13 @@
 /*
 * Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(minPlayer, players){
+var MServer = function(minPlayers, players, playlistId){
 	var minPlayers = minPlayers;
 	var players = players;
 	var status = 'waiting-users';
 	var users = {};
 	var currentSong = 1;
-	var playlist = {
-		1 : 'b4ee4fc0-7d1c-11e3-b49d-b122d042516d',
-		2 : 'b4ee4fc0-7d1c-11e3-b49d-b123d042516d',
-		3 : 'b4ee4fc0-7d1c-11e3-c49d-b123d042516d'};
-	var songlist = {
+	/*var songlist = {
 		'b4ee4fc0-7d1c-11e3-b49d-b122d042516d' : {
 			id : 'b4ee4fc0-7d1c-11e3-b49d-b122d042516d', 
 			song : '01.mp3', 
@@ -36,11 +32,26 @@ var MServer = function(minPlayer, players){
 			cover : '',
 			year : '2013'
 		},
-	};
+	};*/
 
-	for(var k in songlist){
-		songlist[k].cover = songlist[k].cover == '' ? 'default.png' : songlist[k].cover;
-	}
+	var mongoose = require('mongoose');
+	mongoose.connect('mongodb://localhost/mquiz');
+	var db = mongoose.connection;
+
+	db.on('error', console.error.bind(console, "Connection error"));
+	db.once('open', function(){
+		var Schema = mongoose.Schema;
+
+		var songSchema = new Schema({song : String, title : String, cover : String, artist : String, year : Number});
+
+		var Song = mongoose.model('Song', songSchema);
+
+		var testSong = new Song({song : "01.mp3", title : "fjdif", cover : "fgjigs", artist : "gdhsi", year : 2013});
+
+		Song.find({}).where("song").equals("01.mp3").exec(function(err, doc){
+			
+		});
+	});
 
 	this.getMinPlayers = function(){
 		return minPlayers;
@@ -54,21 +65,11 @@ var MServer = function(minPlayer, players){
 	this.getUsers = function(){
 		return users;
 	};
-	this.getPlaylistArray = function(){
-		var result = [];
-		for(var k in playlist){
-			result.push(songlist[playlist[k]]);
-		}
-		return result;
-	};
-	this.getPlaylist = function(){
-		return playlist;
-	}
 	this.getSonglist = function(){
 		return songlist;
 	};
 	this.getCurrentSongIndex = function(){
-		return songlist[playlist[currentSong]].id
+		return songlist[currentSong].id
 	};
 	this.addUser = function(user){
 		users[user.id] = user;
@@ -90,10 +91,10 @@ var MServer = function(minPlayer, players){
 	* Find out if there is enough players to continue the game
 	 */
 	this.hasEnoughPlayers = function(){
-		return status == 'waiting-users' || Object.keys(users).length >= minPlayers;
+		return (status !== 'waiting-users' && this.getUsersArray().length >= minPlayers);
 	}
 	this.checkResponse = function(response){
-		var song = songlist[playlist[currentSong]].title;
+		var song = songlist[currentSong].title;
 		var levenshtein = require('levenshtein');
 		var max = response.length > song.length ? response.length : song.length;
 		var l = new levenshtein(response.toLowerCase(), song.toLowerCase());
@@ -103,7 +104,7 @@ var MServer = function(minPlayer, players){
 		return success >= (max - l.distance) ? false : true;
 	}
 	this.isLastSong = function(){
-		return currentSong == Object.keys(songlist).length;
+		return currentSong === songlist.length - 1;
 	}
 	this.nextSong = function(){
 		currentSong++;
@@ -112,7 +113,7 @@ var MServer = function(minPlayer, players){
 		return currentSong;
 	}
 	this.getCurrentSong = function(){
-		return songlist[playlist[currentSong]];
+		return songlist[currentSong];
 	}
 	this.getUsersArray = function(){
 		return this.hashToArray(users);

@@ -41,15 +41,7 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
 //Getting io object
 var io = require('socket.io').listen(httpServer);
 var game = require('./game');
-app.locals.mServer = new game.MServer(2, 4);
-
-//this func checks every second if the number of players is sufficent to continue.
-setInterval(function(){
-	if(!app.locals.mServer.hasEnoughPlayers()){
-		io.sockets.emit('not-enough-players');
-		app.locals.mServer = new game.MServer(2, 4);
-	}
-}, 1000);
+app.locals.mServer = new game.MServer(2, 2, 'playlist1');
 
 // Remaining time to find the answer
 var restant = 60;
@@ -61,7 +53,7 @@ var remaining = function(){
 		clearInterval(inter);
 		io.sockets.emit('winner', {pseudo : "personne"});
 		if(app.locals.mServer.isLastSong()){
-			io.sockets.emit('game-end');
+			gameEnd();
 		}else{
 			nextSong();
 		}
@@ -73,6 +65,7 @@ var remaining = function(){
 io.sockets.on('connection', function(socket){
 	var me;
 	socket.on('login', function(user){
+
 		me = user;
 		me.id = uuid.v1();
 		me.points = 0;
@@ -99,6 +92,13 @@ io.sockets.on('connection', function(socket){
 	socket.on('ready', function(){
 		me.ready = true;
 		if(app.locals.mServer.allUsersReady()){
+			//this func checks every second if the number of players is sufficent to continue.
+			var enoughCheck = setInterval(function(){
+				if(!app.locals.mServer.hasEnoughPlayers()){
+					io.sockets.emit('not-enough-players');
+					app.locals.mServer = new game.MServer(2, 2, 'playlist1');
+				}
+			}, 1000);
 			nextSong(true);
 		}
 	});
@@ -124,7 +124,7 @@ io.sockets.on('connection', function(socket){
 				clearInterval(inter);
 				io.sockets.emit('winner', me);
 				if(app.locals.mServer.isLastSong()){
-					io.sockets.emit('game-end');
+					gameEnd();
 				}else{
 					nextSong();
 				}
@@ -135,7 +135,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('end-response', function(){
-		if(app.locals.mServer.getStatus() == 'waiting-answer'){
+		if(app.locals.mServer.getStatus() === 'waiting-answer'){
 			io.sockets.emit('continue');
 			app.locals.mServer.setStatus('playing');
 			socket.emit('penalite');
@@ -155,4 +155,9 @@ function nextSong(first){
 		restant = 60;
 		inter = setInterval(remaining,1000);
 	}, 5000);
+}
+
+function gameEnd(){
+	io.sockets.emit('game-end');
+	app.locals.mServer.setStatus('ended');
 }
