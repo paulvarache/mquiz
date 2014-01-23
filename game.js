@@ -34,25 +34,6 @@ var MServer = function(minPlayers, players, playlistId){
 		},
 	};*/
 
-	var mongoose = require('mongoose');
-	mongoose.connect('mongodb://localhost/mquiz');
-	var db = mongoose.connection;
-
-	db.on('error', console.error.bind(console, "Connection error"));
-	db.once('open', function(){
-		var Schema = mongoose.Schema;
-
-		var songSchema = new Schema({song : String, title : String, cover : String, artist : String, year : Number});
-
-		var Song = mongoose.model('Song', songSchema);
-
-		var testSong = new Song({song : "01.mp3", title : "fjdif", cover : "fgjigs", artist : "gdhsi", year : 2013});
-
-		Song.find({}).where("song").equals("01.mp3").exec(function(err, doc){
-			
-		});
-	});
-
 	this.getMinPlayers = function(){
 		return minPlayers;
 	};

@@ -33,3 +33,12 @@
 .game, #before-play, #playing, #wait{
 	text-align: center;
 }
+li.sortable-placeholder{
+	border : 1px dashed grey;
+}
+.sortable>li:hover{
+	cursor: pointer;
+}
+.sortable{
+	border: 1px solid grey;
+}

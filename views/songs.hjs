@@ -1,0 +1,12 @@
+<ul class="connected sortable list-group" id="playlist" style="display: inline-block;">
+</ul>
+<ul class="connected sortable list-group" id="songlist" style="display: inline-block;">
+	{{#songs}}
+	<li draggable="true" class="list-group-item">{{title}}</li>
+	{{/songs}}
+</ul>
+
+{{#yield-javascripts}}
+	<script type="text/javascript" src="/javascripts/jquery.sortable.js"></script>
+	<script type="text/javascript" src="/javascripts/songs.js"></script>
+{{/yield-javascripts}}

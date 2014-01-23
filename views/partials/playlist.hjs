@@ -1,0 +1,8 @@
+<li class="list-group-item">
+	<a href="songs/{{id}}">{{name}} / {{difficulty}}</a>
+	<div class="pull-right">
+		<a href="#" id="{{id}}" class="delete-link">
+			<span class="glyphicon glyphicon-trash"></span>
+		</a>
+	</div>
+</li>

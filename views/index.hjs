@@ -1,103 +1,68 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>MQuiz - Index</title>
-        <link rel="stylesheet" href="stylesheets/bootstrap.css" />
-        <link rel="stylesheet" href="stylesheets/mquiz.css" />
-    </head>
-    <body>
-        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="mquiz-navbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand">MQuiz</a>
-            </div>
-            <div class="collapse navbar-collapse" id="mquiz-navbar">
-                <ul class="nav navbar-nav">
-                    <li><a href="#">Index</a></li>
-                </ul>
-            </div>
-        </nav>
-        <div class="login-full text-center" id='login-screen'>
-            <h1>Bienvenue sur MQuiz !</h1>
-            <h4>Veuillez choisir un pseudonyme et un avatar pour commencer.</h4>
-            <form action="#" class="form-inline" role="form" id="login-form">
-                <a href="#" class="thumbnail avatar" id="default-avatar">
-                    <div class="default-avatar"></div>
-                </a>
-                <input class="avatar-field" type="hidden" name="avatar" id="avatar"/>
-                <div id="ou" style="display: inline-block">ou</div>
-                <div class="form-group">
-                    <label class="sr-only" for="gravatar">Gravatar</label>
-                    <input class="form-control avatar-field" type='email' name='gravatar' id='gravatar' placeholder="Gravatar"/>
-                </div>
-                <div class="form-group">
-                    <label class="sr-only" for="pseudo">Pseudo</label>
-                    <input class="form-control" type='text' id='pseudo' name='pseudo' placeholder="Pseudo" />
-                </div>
-                <button type='submit' class="btn btn-default">OK</button>
-            </form>
+<div class="login-full text-center" id='login-screen'>
+    <h1>Bienvenue sur MQuiz !</h1>
+    <h4>Veuillez choisir un pseudonyme et un avatar pour commencer.</h4>
+    <form action="#" class="form-inline" role="form" id="login-form">
+        <a href="#" class="thumbnail avatar" id="default-avatar">
+            <div class="default-avatar"></div>
+        </a>
+        <input class="avatar-field" type="hidden" name="avatar" id="avatar"/>
+        <div id="ou" style="display: inline-block">ou</div>
+        <div class="form-group">
+            <label class="sr-only" for="gravatar">Gravatar</label>
+            <input class="form-control avatar-field" type='email' name='gravatar' id='gravatar' placeholder="Gravatar"/>
         </div>
-        <div class='app'>
-            <div class="row">
-                <div class="col-md-2">
-                	<h3>Liste des participants</h3>
-						<ul id="usrlist" class="unstyled" id="usrlist">
+        <div class="form-group">
+            <label class="sr-only" for="pseudo">Pseudo</label>
+            <input class="form-control" type='text' id='pseudo' name='pseudo' placeholder="Pseudo" />
+        </div>
+        <button type='submit' class="btn btn-default">OK</button>
+    </form>
+</div>
+<div class='app'>
+    <div class="row">
+        <div class="col-md-2">
+        	<h3>Liste des participants</h3>
+				<ul id="usrlist" class="unstyled" id="usrlist">
 
-						</ul>
+				</ul>
+        </div>
+        <div class="col-md-8">
+            <div class="container-fluid" id="game">
+                <div id='before-play' class='panel'>
+                    <h3>Vous avez rejoint la partie. Pour commencer cliquez sur "READY !"</h3>
+                    <button class="btn btn-primary btn-lg" id="ready-btn">READY !</button>
                 </div>
-                <div class="col-md-8">
-                    <div class="container-fluid" id="game">
-                        <div id='before-play' class='panel'>
-                            <h3>Vous avez rejoint la partie. Pour commencer cliquez sur "READY !"</h3>
-                            <button class="btn btn-primary btn-lg" id="ready-btn">READY !</button>
+                <div id="playing" style="display: none;" class='panel'>
+                    <h1 id="countdown"></h1>
+                    <form id="response-form" class="form game-form" role="form">
+                    <input type="text" class="form-control" id='response' name='response' placeholder='Votre réponse'/><br/>
+                        <button type="submit" class="btn btn-default btn-lg" id="submit-response" >STOP !</button>
+                    </form>
+                </div>
+                <div id="penalite" class="panel">
+                	<h2>Pénalité</h2>
+                    <div class="progress progress-striped active">
+                        <div id='penalite-bar' class="progress-bar progress-bar-danger" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
                         </div>
-                        <div id="playing" style="display: none;" class='panel'>
-                            <h1 id="countdown"></h1>
-                            <form id="response-form" class="form game-form" role="form">
-                            <input type="text" class="form-control" id='response' name='response' placeholder='Votre réponse'/><br/>
-                                <button type="submit" class="btn btn-default btn-lg" id="submit-response" >STOP !</button>
-                            </form>
-                        </div>
-                        <div id="penalite" class="panel">
-                        	<h2>Pénalité</h2>
-                            <div class="progress progress-striped active">
-                                <div id='penalite-bar' class="progress-bar progress-bar-danger" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
-                                </div>
-                            </div>
-                        </div>
-                        <div id="not-enough" class='panel'>
-                        	<h2>Il n'y a plus assez de joueurs pour continuer la partie...</h2>
-                        </div>
-                        <div id="wait" class='panel'>
-                            <h2>En attente de la chanson suivante...</h2>
-                            <div class="progress progress-striped active">
-                                <div id='waiting-next-song' class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
-                                </div>
-                            </div>
-                        </div>
-                        <div id="end" class='panel'></div>
-                        <div id="songlist"></div>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <h4>Dernières musiques</h4>
-                    <ul class="list-group" id="last-songs"></ul>
+                <div id="not-enough" class='panel'>
+                	<h2>Il n'y a plus assez de joueurs pour continuer la partie...</h2>
                 </div>
+                <div id="wait" class='panel'>
+                    <h2>En attente de la chanson suivante...</h2>
+                    <div class="progress progress-striped active">
+                        <div id='waiting-next-song' class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+                <div id="end" class='panel'></div>
+                <div id="songlist"></div>
             </div>
         </div>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-        <script type="text/javascript" src="javascripts/app.js"></script>
-        <script type="text/javascript" src="javascripts/jquery.validate.js"></script>
-        <script type="text/javascript" src="javascripts/additional-methods.js"></script>
-        <script type="text/javascript" src="javascripts/validate.localization/messages_fr.js"></script>
-        <script type="text/javascript" src="javascripts/jquery.tablesorter.js"></script>
-        <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
-        <script type="text/javascript" src="socket.io/socket.io.js"></script>
-    </body>
-</html>
+        <div class="col-md-2">
+            <h4>Dernières musiques</h4>
+            <ul class="list-group" id="last-songs"></ul>
+        </div>
+    </div>
+</div>

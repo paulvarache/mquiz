@@ -40,3 +40,61 @@ exports.scores = function(req, res){
 	var users = req.app.locals.mServer.getUsersArray();
   	return res.render('partials/scores', { users: users });
 };
+
+/*
+ * GET playlists
+ */
+
+exports.playlists = function(req, res){
+	req.app.locals.Playlist.find().exec(function(err, docs){
+		if(err){
+			console.log(err);
+		}
+		console.log(docs);
+		return res.render('playlists', { playlists: docs });
+	});
+};
+/*
+ * POST playlists
+ */
+exports.playlistsPost = function(req, res){
+	if(req.xhr){
+		var newPlaylist = new req.app.locals.Playlist({name : req.body.name, difficulty : req.body.difficulty});
+		newPlaylist.save(function(err, doc){
+			if(err){
+				console.log(err);
+			}
+			console.log(doc);
+			doc.layout = null;
+			return res.render('partials/playlist', doc);
+		});
+	}else{
+		res.redirect("playlists");
+	}
+};
+
+/*
+ * GET delete playlist
+ */
+exports.playlistDelete = function(req, res){
+	if(req.xhr){
+		var id = req.params.plId;
+		req.app.locals.Playlist.findByIdAndRemove(id, function(err, doc){
+			if(err){
+				console.log(err);
+			}
+			res.send(200);
+		});
+	}else{
+		res.redirect("playlists");
+	}
+}
+
+/*
+ * GET songs
+ */
+exports.songs = function(req, res){
+	req.app.locals.Song.find().exec(function(err, docs){
+		res.render('songs', {songs : docs});
+	});
+}
