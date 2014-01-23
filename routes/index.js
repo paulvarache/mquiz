@@ -13,7 +13,7 @@ exports.index = function(req, res){
 
 exports.users = function(req, res){
 	var user = req.app.locals.mServer.getUsers()[req.params.uid];
-  	return res.render('partials/user', { user: user });
+  	return res.render('partials/user', { user: user , layout : null});
 };
 
 /*
@@ -21,7 +21,7 @@ exports.users = function(req, res){
  */
 exports.songlist = function(req, res){
 	var songs = req.app.locals.mServer.getSonglist();
-	return res.render('partials/songs', {songs: songs});
+	return res.render('partials/songs', {songs: songs, layout : null});
 }
 
 /*
@@ -29,7 +29,7 @@ exports.songlist = function(req, res){
  */
 exports.songdetails = function(req, res){
 	var song = req.app.locals.mServer.getSonglist()[req.params.songid];
-	return res.render('partials/songdetails', {song: song});
+	return res.render('partials/songdetails', {song: song, layout : null});
 }
 
 /*
@@ -38,7 +38,7 @@ exports.songdetails = function(req, res){
 
 exports.scores = function(req, res){
 	var users = req.app.locals.mServer.getUsersArray();
-  	return res.render('partials/scores', { users: users });
+  	return res.render('partials/scores', { users: users , layout : null});
 };
 
 /*
@@ -94,7 +94,39 @@ exports.playlistDelete = function(req, res){
  * GET songs
  */
 exports.songs = function(req, res){
+	req.app.locals.Song.find().where({playlists : req.params.plId}).exec(function(err, docs){
+		req.app.locals.Song.find().where({playlists : { $ne : req.params.plId}}).exec(function(err, others){
+			res.render('songs', {songs : others, currentPlaylist : docs});
+		});
+	});
+}
+
+/*
+ * POST songs
+ */
+exports.songsPost = function(req, res){
+	if(req.xhr){
+		req.app.locals.Song.update(
+			{playlists : req.params.plId},
+			{$pop : {playlists : {$each : [req.params.plId]}}},
+			function(){
+				req.app.locals.Song.update(
+					{_id : { $in : req.body.idList}},
+					{$addToSet : {playlists : {$each : [req.params.plId]}}},
+					function(err, songs){
+						res.send(200);
+					});
+			});
+	}else{
+		res.redirect('playlists');
+	}
+}
+
+/*
+ * GET song.
+ */
+exports.song = function(req, res){
 	req.app.locals.Song.find().exec(function(err, docs){
-		res.render('songs', {songs : docs});
+		res.render('song', {songs : docs});
 	});
 }

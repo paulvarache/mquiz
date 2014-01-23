@@ -22,6 +22,7 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/">Jeu</a></li>
                     <li><a href="/playlists">Playlists</a></li>
+                    <li><a href="/song">Musiques</a></li>
                 </ul>
             </div>
         </nav>

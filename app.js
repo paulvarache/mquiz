@@ -40,6 +40,8 @@ app.get('/playlists', routes.playlists);
 app.post('/playlists', routes.playlistsPost);
 app.get('/playlist/delete/:plId', routes.playlistDelete);
 app.get('/songs/:plId', routes.songs);
+app.post('/songs/:plId', routes.songsPost);
+app.get('/song', routes.song);
 
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -62,7 +64,8 @@ db.once('open', function(){
 		title : String,
 		cover : String,
 		artist : String,
-		year : Number
+		year : Number,
+		playlists : []
 	});
 
 	var Playlist = mongoose.model('Playlist', playlistSchema);
@@ -74,7 +77,12 @@ db.once('open', function(){
 	//Getting io object
 	var io = require('socket.io').listen(httpServer);
 	var game = require('./game');
-	app.locals.mServer = new game.MServer(2, 2, 'playlist1');
+	mServer = new game.MServer(2, 2, 'playlist1');
+	app.locals.mServer = mServer;
+
+	Song.find().exec(function(err, songs){
+		mServer.setSonglist(songs);
+	})
 
 	// Remaining time to find the answer
 	var restant = 60;

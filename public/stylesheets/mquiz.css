@@ -33,12 +33,20 @@
 .game, #before-play, #playing, #wait{
 	text-align: center;
 }
-li.sortable-placeholder{
+div.sortable-placeholder{
+	display: inline-block;
 	border : 1px dashed grey;
+	min-width: 100px;
+	min-height: 100px;
+	margin : 2px;
 }
-.sortable>li:hover{
+.sortable>div:hover{
 	cursor: pointer;
 }
-.sortable{
+.playlist{
 	border: 1px solid grey;
+}
+.sortable>.list-group-item, .song{
+	display: inline-block;
+	margin: 5px;
 }

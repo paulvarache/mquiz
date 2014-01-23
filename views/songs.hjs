@@ -1,10 +1,48 @@
-<ul class="connected sortable list-group" id="playlist" style="display: inline-block;">
-</ul>
-<ul class="connected sortable list-group" id="songlist" style="display: inline-block;">
-	{{#songs}}
-	<li draggable="true" class="list-group-item">{{title}}</li>
-	{{/songs}}
-</ul>
+<h2>Modifier une playlist</h2>
+<div class="row-fluid">
+	<div class="col-md-4">
+		<h3>Nouvelle playlist</h3>
+		<div class="connected sortable playlist" id="playlist">
+			<div class="sortable-placeholder"></div>
+			{{#currentPlaylist}}
+			<div draggable="true" class="list-group-item" id="{{id}}">
+				<img src="/cover/{{cover}}" width="40px"/>
+				<h5>{{title}}</h5>
+				<h6>{{artist}}</h6>
+				<h6>{{year}}</h6>
+			</div>
+			{{/currentPlaylist}}
+		</div>
+	</div>
+	<div class="col-md-4">
+		<h3>Toutes les chansons</h3>
+		<div class="connected sortable playlist" id="songlist">
+			<div class="sortable-placeholder"></div>
+			{{#songs}}
+			<div draggable="true" class="list-group-item" id="{{id}}">
+				<img src="/cover/{{cover}}" width="40px"/>
+				<h5>{{title}}</h5>
+				<h6>{{artist}}</h6>
+				<h6>{{year}}</h6>
+			</div>
+			{{/songs}}
+		</div>
+	</div>
+	<div class="col-md-4">
+		<h3>Ancienne playlist</h3>
+		<div id="currentPlaylist playlist">
+			{{#currentPlaylist}}
+				<div class="list-group-item" id="{{id}}">{{title}}</div>
+			{{/currentPlaylist}}
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12" style="text-align: center">
+		<br/>
+		<button type="button" id="save-btn" class="btn btn-primary">Sauvegarder</button>
+	</div>
+</div>
 
 {{#yield-javascripts}}
 	<script type="text/javascript" src="/javascripts/jquery.sortable.js"></script>

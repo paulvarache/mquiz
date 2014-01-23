@@ -6,33 +6,11 @@ var MServer = function(minPlayers, players, playlistId){
 	var players = players;
 	var status = 'waiting-users';
 	var users = {};
-	var currentSong = 1;
-	/*var songlist = {
-		'b4ee4fc0-7d1c-11e3-b49d-b122d042516d' : {
-			id : 'b4ee4fc0-7d1c-11e3-b49d-b122d042516d', 
-			song : '01.mp3', 
-			title : 'Luigi\'s Ballad',
-			artist : 'StarBomb',
-			cover : '01.jpg',
-			year : '2013'
-		},
-		'b4ee4fc0-7d1c-11e3-b49d-b123d042516d' : {
-			id : 'b4ee4fc0-7d1c-11e3-b49d-b123d042516d', 
-			song : '02.mp3', 
-			title : 'Othersides',
-			artist : 'Macklemore feat. Ryan Lewis',
-			cover : '02.jpg',
-			year : '2010'
-		},
-		'b4ee4fc0-7d1c-11e3-c49d-b123d042516d' : {
-			id : 'b4ee4fc0-7d1c-11e3-c49d-b123d042516d', 
-			song : '03.mp3', 
-			title : 'Panic Station (Madeon Remix)',
-			artist : 'Madeon',
-			cover : '',
-			year : '2013'
-		},
-	};*/
+	var currentSong = 0;
+
+	this.setSonglist = function(nSonglist){
+		songlist = nSonglist;
+	}
 
 	this.getMinPlayers = function(){
 		return minPlayers;

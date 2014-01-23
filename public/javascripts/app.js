@@ -159,7 +159,8 @@ $(document).ready(function(){
 	socket.on('winner', function(winner){
 		if(myId != ''){
 			console.log('WINNER');
-			$.get('songdetails/'+currentSong, function(data){
+			$.get('/songdetails/'+currentSong, function(data){
+				console.log(data);
 				html = $(data);
 				html.find('#foundby').html('Trouvé par '+winner.pseudo);
 				$('#last-songs').hide().prepend(html[0]).fadeIn();
@@ -192,7 +193,7 @@ $(document).ready(function(){
 
 	socket.on('game-end', function(users){
 		if(myId != ''){
-			$.get('scores', function(data){
+			$.get('/scores', function(data){
 				$('#end').html(data);
 			});
 			$('#score-table').tablesorter({sortList : [[1,0]]});
