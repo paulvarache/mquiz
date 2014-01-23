@@ -2,6 +2,7 @@ composer.json
 composer.phar
 app/cache/*
 app/logs/*
-public/*
+public/audio/*
+public/cover/*
 data/*
 node_modules/*

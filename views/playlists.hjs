@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>MQuiz - Index</title>
+        <link rel="stylesheet" href="stylesheets/bootstrap.css" />
+        <link rel="stylesheet" href="stylesheets/mquiz.css" />
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="mquiz-navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand">MQuiz</a>
+            </div>
+            <div class="collapse navbar-collapse" id="mquiz-navbar">
+                <ul class="nav navbar-nav">
+                    <li><a href="#">Index</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class='app'>
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-8">
+                    <div class="container-fluid" id="game">
+                        <ul>
+                            {{#playlists}}
+                            <li>{{name}} / {{difficulty}}</li>
+                            {{/playlists}}
+                        </ul>
+                        <form class="form" action="playlists" method="POST">
+                            
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script type="text/javascript" src="javascripts/app.js"></script>
+        <script type="text/javascript" src="javascripts/jquery.validate.js"></script>
+        <script type="text/javascript" src="javascripts/additional-methods.js"></script>
+        <script type="text/javascript" src="javascripts/validate.localization/messages_fr.js"></script>
+        <script type="text/javascript" src="javascripts/jquery.tablesorter.js"></script>
+        <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
+        <script type="text/javascript" src="socket.io/socket.io.js"></script>
+    </body>
+</html>
