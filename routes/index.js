@@ -28,8 +28,10 @@ exports.songlist = function(req, res){
  * GET song details.
  */
 exports.songdetails = function(req, res){
-	var song = req.app.locals.mServer.getSonglist()[req.params.songid];
-	return res.render('partials/songdetails', {song: song, layout : null});
+	req.app.locals.Song.findById(req.params.songid, function(err, doc){
+		console.log(doc);
+		return res.render('partials/songdetails', {song: doc, layout : null});
+	});
 }
 
 /*
@@ -108,12 +110,16 @@ exports.songsPost = function(req, res){
 	if(req.xhr){
 		req.app.locals.Song.update(
 			{playlists : req.params.plId},
-			{$pop : {playlists : {$each : [req.params.plId]}}},
-			function(){
+			{$pop : {playlists : req.params.plId}},
+			{multi : true},
+			function(err, data){
 				req.app.locals.Song.update(
-					{_id : { $in : req.body.idList}},
-					{$addToSet : {playlists : {$each : [req.params.plId]}}},
+					{_id : { '$in' : req.body.idList}},
+					{$push : {playlists : req.params.plId}},
+					{multi : true},
 					function(err, songs){
+						console.log('SONGS UPDATED : ');
+						console.log(songs);
 						res.send(200);
 					});
 			});
@@ -129,4 +135,26 @@ exports.song = function(req, res){
 	req.app.locals.Song.find().exec(function(err, docs){
 		res.render('song', {songs : docs});
 	});
+}
+
+/*
+ * POST song.
+ */
+exports.songPost = function(req, res){
+	console.log(req.files);
+	var song = req.app.locals.Song({
+		title : req.body.title,
+		artist : req.body.artist,
+		cover : req.body.cover});
+	song.save(function(err, doc){
+			var fs = require('fs');
+			fs.readFile(req.files.song.path, function(err, data){
+				var newpath = __dirname+'/../public/audio/'+doc._id+'.mp3';
+				fs.writeFile(newpath, data, function(err){
+					fs.unlink(req.files.song.path, function(){
+						res.redirect('/song');
+					});
+				});
+			});
+		});
 }

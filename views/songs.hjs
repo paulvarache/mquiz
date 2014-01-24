@@ -6,7 +6,7 @@
 			<div class="sortable-placeholder"></div>
 			{{#currentPlaylist}}
 			<div draggable="true" class="list-group-item" id="{{id}}">
-				<img src="/cover/{{cover}}" width="40px"/>
+				<img src="{{cover}}" width="40px"/>
 				<h5>{{title}}</h5>
 				<h6>{{artist}}</h6>
 				<h6>{{year}}</h6>
@@ -20,7 +20,7 @@
 			<div class="sortable-placeholder"></div>
 			{{#songs}}
 			<div draggable="true" class="list-group-item" id="{{id}}">
-				<img src="/cover/{{cover}}" width="40px"/>
+				<img src="{{cover}}" width="40px"/>
 				<h5>{{title}}</h5>
 				<h6>{{artist}}</h6>
 				<h6>{{year}}</h6>

@@ -1,5 +1,5 @@
 <li class="list-group-item">
-    <img class="thumbnail cover" id="cover" src="cover/{{song.cover}}" />
+    <img class="thumbnail cover" id="cover" src="{{song.cover}}" />
     <h5>{{song.title}}</h5>
     <h6>{{song.artist}}</h6>
     <h6>{{song.year}}</h6>

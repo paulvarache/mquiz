@@ -1,12 +1,13 @@
 /*
 * Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(minPlayers, players, playlistId){
+var MServer = function(minPlayers, players, songlist){
 	var minPlayers = minPlayers;
 	var players = players;
 	var status = 'waiting-users';
 	var users = {};
 	var currentSong = 0;
+	var songlist = songlist;
 
 	this.setSonglist = function(nSonglist){
 		songlist = nSonglist;

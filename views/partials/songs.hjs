@@ -1,7 +1,7 @@
 {{#songs}}
 <div style="display:none">
 	<audio id="{{id}}" preload="auto">
-	<source src="audio/{{song}}" type="audio/mpeg">
+	<source src="audio/{{id}}.mp3" type="audio/mpeg">
 	</audio>
 </div>
 {{/songs}}
