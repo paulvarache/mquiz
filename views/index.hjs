@@ -1,7 +1,7 @@
 <div class="login-full text-center" id='login-screen'>
     <h1>Bienvenue sur MQuiz !</h1>
     <h4>Veuillez choisir un pseudonyme et un avatar pour commencer.</h4>
-    <form action="#" class="form-inline" role="form" id="login-form">
+    <form action="/" method="POST" class="form-inline" role="form" id="login-form">
         <a href="#" class="thumbnail avatar" id="default-avatar">
             <div class="default-avatar"></div>
         </a>
@@ -18,51 +18,6 @@
         <button type='submit' class="btn btn-default">OK</button>
     </form>
 </div>
-<div class='app'>
-    <div class="row">
-        <div class="col-md-2">
-        	<h3>Liste des participants</h3>
-				<ul id="usrlist" class="unstyled" id="usrlist">
-
-				</ul>
-        </div>
-        <div class="col-md-8">
-            <div class="container-fluid" id="game">
-                <div id='before-play' class='panel'>
-                    <h3>Vous avez rejoint la partie. Pour commencer cliquez sur "READY !"</h3>
-                    <button class="btn btn-primary btn-lg" id="ready-btn">READY !</button>
-                </div>
-                <div id="playing" style="display: none;" class='panel'>
-                    <h1 id="countdown"></h1>
-                    <form id="response-form" class="form game-form" role="form">
-                    <input type="text" class="form-control" id='response' name='response' placeholder='Votre réponse'/><br/>
-                        <button type="submit" class="btn btn-default btn-lg" id="submit-response" >STOP !</button>
-                    </form>
-                </div>
-                <div id="penalite" class="panel">
-                	<h2>Pénalité</h2>
-                    <div class="progress progress-striped active">
-                        <div id='penalite-bar' class="progress-bar progress-bar-danger" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
-                        </div>
-                    </div>
-                </div>
-                <div id="not-enough" class='panel'>
-                	<h2>Il n'y a plus assez de joueurs pour continuer la partie...</h2>
-                </div>
-                <div id="wait" class='panel'>
-                    <h2>En attente de la chanson suivante...</h2>
-                    <div class="progress progress-striped active">
-                        <div id='waiting-next-song' class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
-                        </div>
-                    </div>
-                </div>
-                <div id="end" class='panel'></div>
-                <div id="songlist"></div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <h4>Dernières musiques</h4>
-            <ul class="list-group" id="last-songs"></ul>
-        </div>
-    </div>
-</div>
+{{#yield-javascripts}}
+    <script type="text/javascript" src="/javascripts/index.js"></script>
+{{/yield-javascripts}}

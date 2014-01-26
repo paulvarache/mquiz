@@ -1,0 +1,64 @@
+$(document).ready(function(){
+	/*
+	* Preparation of the avatar section
+	 */
+	var defaultAvatar = $("#default-avatar");
+	var colors = ['FireBrick', 'LightSkyBlue', 'GreenYellow'];
+
+	for(var i in colors){
+		var da = defaultAvatar.clone();
+		da.attr('id', colors[i]);
+		da.find('.default-avatar').attr('style', 'background-color: '+colors[i]+';');
+		defaultAvatar.parent().prepend(da);
+	}
+	defaultAvatar.remove();
+
+	$('.default-avatar').each(function(){
+		$(this).parent().click(function(e){
+			e.preventDefault();
+			$('.default-avatar').each(function(){
+				$(this).parent().css('background-color', 'white');
+			})
+			$(this).css('background-color', 'grey');
+			$('#avatar').val($(this).attr('id'));
+			$(this).attr('class', $(this).attr('class')+' active');
+		});
+	});
+
+	/*
+ 	* Definition of the actions to perform on the page elements
+  	*/
+  	$('#gravatar').on('keyup change', function(){
+  		defaultAvatarAutoHide($(this).val());
+  	});
+
+  	/*
+  	* Enables the validation of hidden type input.
+  	 */
+  	$.validator.setDefaults({
+    	ignore: [],
+	});
+
+  	/*
+  	* Description of the validation methods for the login form
+  	 */
+  	$('#login-form').validate({
+  		groups : {
+  			names : "avatar gravatar"
+  		},
+  		rules : {
+  			avatar : {
+  				require_from_group : [1, '.avatar-field']
+  			},
+  			gravatar : {
+  				require_from_group : [1, '.avatar-field'],
+  				email : true
+  			},
+  			pseudo : {
+  				required : true,
+  				minlength : 4,
+  				maxlength : 22
+  			}
+  		}
+  	});
+});

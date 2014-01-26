@@ -1,0 +1,32 @@
+<div class="container">
+	<ul class="list-group">
+		{{#salons}}
+		<li class="list-group-item">
+			<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+		</li>
+		{{/salons}}
+	</ul>
+	<button type="button" class="btn btn-default" id="add-salon">Nouveau salon</button>
+	<form action="/salons" method="POST" role="form" id="salonForm" style="display : none">
+		<div class="form-group">
+			<label for='name'>Nom du salon</label>
+			<input type="text" class="form-control" id="name" name="name" placeholder="Nom" />
+		</div>
+		<div class="form-group">
+			<label for="playlist">Choix de la playlist</label>
+			<select name="playlist" id="playlist" class="form-control" size="5">
+				{{#playlists}}
+				<option value="{{id}}">{{name}}</option>
+				{{/playlists}}
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="player">Nombre de joueur</label>
+			<input type="number" id='number' name="number" class="form-control" />
+		</div>
+		<button type="submit" class="btn btn-primary">Créer</button>
+	</form>
+</div>
+{{#yield-javascripts}}
+<script type="text/javascript" src="/javascripts/salons.js"></script>
+{{/yield-javascripts}}

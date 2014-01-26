@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	var reqEnd = '&api_key=5216edf37ad15286cfb41070bd484906&format=json';
 	var tracks;
-	var artistMbid;
+	var artist;
 	var step = 'artist';
 	$('#form').submit(function(e){
 		var parts = $('#song').val().split('.');
@@ -39,7 +39,7 @@ $(document).ready(function(){
 				$('#artist-name').html('');
 				$('#artist-image').attr('src', '');
 			}
-			artistMbid = data.artist.mbid;
+			artist = data.artist.name;
 		});
 	});
 	$('#title').change(function(){
@@ -55,7 +55,7 @@ $(document).ready(function(){
 		$(this).slideUp();
 	});
 	var getTracks = function(){
-		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&mbid='+artistMbid+reqEnd, function(data){
+		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+artist+reqEnd, function(data){
 			console.log(data);
 				tracks = data.toptracks.track;
 				displayTracks();

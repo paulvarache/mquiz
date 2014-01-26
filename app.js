@@ -1,3 +1,12 @@
+Array.prototype.shuffle = function(){
+	var i = this.length, shuffle = [];
+	for(;i>0;i--){
+		var j = Math.floor(Math.random() * (i - 1));
+		shuffle.push(this[j]);
+		this.splice(j, 1);
+	}
+	return shuffle;
+}
 
 /**
  * Module dependencies.
@@ -9,6 +18,7 @@ var http = require('http');
 var path = require('path');
 var uuid = require('uuid');
 var crypto = require('crypto');
+var game = require('./game');
 var app = express();
 
 // all environments
@@ -22,6 +32,7 @@ app.use(express.bodyParser({uploadDir : 'tmp'}));
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.methodOverride());
+app.use(express.limit('15mb'));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -31,6 +42,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.post('/', routes.indexPost);
 app.get('/user/:uid', routes.users);
 app.get('/songlist', routes.songlist);
 app.get('/songdetails/:songid', routes.songdetails);
@@ -42,42 +54,58 @@ app.get('/songs/:plId', routes.songs);
 app.post('/songs/:plId', routes.songsPost);
 app.get('/song', routes.song);
 app.post('/song', routes.songPost);
+app.get('/salons', routes.salons);
+app.post('/salons', routes.salonsPost);
 
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+
+/*
+* Connexion a la base de données
+*/
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/mquiz');
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, "Connection error"));
 db.once('open', function(){
-	var Schema = mongoose.Schema;
 
-	var playlistSchema = new Schema({
-		name : String,
-		difficulty : Number
-	});
-	var songSchema = new Schema({
-		title : String,
-		cover : String,
-		artist : String,
-		playlists : []
-	});
+	var model = require('./model');
+	var Song = model.Song;
+	var Playlist = model.Playlist;
 
-	var Playlist = mongoose.model('Playlist', playlistSchema);
-	var Song = mongoose.model('Song', songSchema);
-
-	app.locals.Playlist = Playlist;
 	app.locals.Song = Song;
+	app.locals.Playlist = Playlist;
+
+	var salons = {};
+	var users = {};
+
+	app.locals.salons = salons;
+	app.locals.users = users;
+	app.locals.MServer = game.MServer;
+
+	//Salon exemple
+	var mServer = new game.MServer('Salon test', 2, '52e2bc3904d4a0810f43f9dc');
+
+	salons[mServer.id] = mServer;
 
 	//Getting io object
 	var io = require('socket.io').listen(httpServer);
-	var game = require('./game');
 
-	Song.find().where({playlists : '52e13a37c1fff3a252f7578e'}).exec(function(err, songs){
-		mServer = new game.MServer(2, 2, songs);
+
+
+
+
+
+
+	/*
+	*	RECONSTRUCTION EN COURS
+	*/
+
+	Song.find().where({playlists : '52e2bc3904d4a0810f43f9dc'}).exec(function(err, songs){
+		mServer = new game.MServer(2, 2, songs.shuffle());
 		app.locals.mServer = mServer;
 
 		// Remaining time to find the answer
@@ -133,7 +161,7 @@ db.once('open', function(){
 					var enoughCheck = setInterval(function(){
 						if(!app.locals.mServer.hasEnoughPlayers()){
 							io.sockets.emit('not-enough-players');
-							app.locals.mServer = new game.MServer(2, 2, 'playlist1');
+							//app.locals.mServer = new game.MServer(2, 2, 'playlist1');
 						}
 					}, 1000);
 					nextSong(true);

@@ -1,20 +1,36 @@
 /*
 * Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(minPlayers, players, songlist){
-	var minPlayers = minPlayers;
+var MServer = function(name, players, songlistId){
+	var uuid = require('uuid');
+	var model = require('./model');
+	var Song = model.Song;
+	var Playlist = model.Playlist;
+	var id = uuid.v1();
+	var name = name;
 	var players = players;
 	var status = 'waiting-users';
 	var users = {};
 	var currentSong = 0;
-	var songlist = songlist;
+	var songlist = [];
+	Song.find().where({playlists : songlistId}).exec(function(err, songs){
+		songlist = songs.shuffle();
+	});
 
+	this.getConnectedUsers = function(){
+		return this.getUsersArray().length;
+	}
+	this.getMaxUsers = function(){
+		return players;
+	}
+	this.getId = function(){
+		return id;
+	}
+	this.getName = function(){
+		return name;
+	};
 	this.setSonglist = function(nSonglist){
 		songlist = nSonglist;
-	}
-
-	this.getMinPlayers = function(){
-		return minPlayers;
 	};
 	this.getStatus = function(){
 		return status;
@@ -51,7 +67,7 @@ var MServer = function(minPlayers, players, songlist){
 	* Find out if there is enough players to continue the game
 	 */
 	this.hasEnoughPlayers = function(){
-		return (status !== 'waiting-users' && this.getUsersArray().length >= minPlayers);
+		return (status !== 'waiting-users' && this.getUsersArray().length >= 2);
 	}
 	this.checkResponse = function(response){
 		var song = songlist[currentSong].title;

@@ -1,3 +1,11 @@
+var hashToArray = function(hash){
+	var ar = [];
+	for(var k in hash){
+		ar.push(hash[k]);
+	}
+	return ar;
+}
+
 
 /*
  * GET home page.
@@ -6,6 +14,26 @@
 exports.index = function(req, res){
   res.render('index', { title: 'Express' });
 };
+
+exports.indexPost = function(req, res){
+	var uuid = require('uuid');
+	var avatar = '';
+	if(req.body.gravatar != ''){
+		avatar = '<img src="http://www.gravatar.com/avatar/'+crypto.createHash('md5').update(req.body.gravatar).digest('hex')+'" />';
+	}else{
+		avatar = '<div class="default-avatar" style="background-color:'+req.body.avatar+'"></div>';
+	}
+	user = {
+		id : uuid.v1(),
+		pseudo : req.body.pseudo,
+		avatar : avatar,
+		points : 0,
+		founds : ''
+	};
+	req.app.locals.users[user.id] = user;
+	console.log(req.app.locals.users);
+	res.redirect('/salons');
+}
 
 /*
  * GET users list.
@@ -157,4 +185,18 @@ exports.songPost = function(req, res){
 				});
 			});
 		});
+}
+
+
+exports.salons = function(req, res){
+	req.app.locals.Playlist.find().exec(function(err, playlists){
+		res.render('salons', {playlists : playlists, salons : hashToArray(req.app.locals.salons)});
+	})
+}
+
+exports.salonsPost = function(req, res){
+	var salon = new req.app.locals.MServer(req.body.name, req.body.players, req.body.playlist);
+	req.app.locals.salons[salon.getId()] = salon;
+	//get connected user and move him from app to salon
+	res.redirect('/play/'+salon.getId());
 }
