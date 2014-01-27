@@ -12,7 +12,11 @@ var hashToArray = function(hash){
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+	if(typeof req.session.user === 'undefined'){
+		res.render('index', { title: 'Express' });
+	}else{
+		res.redirect('/salons');
+	}
 };
 
 exports.indexPost = function(req, res){
@@ -31,8 +35,12 @@ exports.indexPost = function(req, res){
 		founds : ''
 	};
 	req.app.locals.users[user.id] = user;
-	console.log(req.app.locals.users);
+	req.session.user = user;
 	res.redirect('/salons');
+};
+
+exports.play = function(req, res){
+	return res.render('play', {salonid : req.params.salonid, me : req.session.user});
 }
 
 /*
@@ -40,7 +48,8 @@ exports.indexPost = function(req, res){
  */
 
 exports.users = function(req, res){
-	var user = req.app.locals.mServer.getUsers()[req.params.uid];
+	var salon = req.app.locals.salons[req.params.salonid];
+	var user = salon.getUser(req.params.uid);
   	return res.render('partials/user', { user: user , layout : null});
 };
 
@@ -48,8 +57,12 @@ exports.users = function(req, res){
  * GET song list.
  */
 exports.songlist = function(req, res){
-	var songs = req.app.locals.mServer.getSonglist();
-	return res.render('partials/songs', {songs: songs, layout : null});
+	var salon = req.app.locals.salons[req.params.salonid];
+	if(typeof salon === 'undefined'){
+		return res.end('<script>location.href="/salons";</script>');
+	};
+	var songs = salon.getSonglist();
+	return res.render('partials/songs', {songs: songs, layout : null}); 
 }
 
 /*
@@ -57,7 +70,6 @@ exports.songlist = function(req, res){
  */
 exports.songdetails = function(req, res){
 	req.app.locals.Song.findById(req.params.songid, function(err, doc){
-		console.log(doc);
 		return res.render('partials/songdetails', {song: doc, layout : null});
 	});
 }
@@ -67,7 +79,8 @@ exports.songdetails = function(req, res){
  */
 
 exports.scores = function(req, res){
-	var users = req.app.locals.mServer.getUsersArray();
+	var salon = req.app.locals.salons[req.params.salonid];
+	var users = salon.getUsersArray();
   	return res.render('partials/scores', { users: users , layout : null});
 };
 
@@ -80,7 +93,6 @@ exports.playlists = function(req, res){
 		if(err){
 			console.log(err);
 		}
-		console.log(docs);
 		return res.render('playlists', { playlists: docs });
 	});
 };
@@ -94,7 +106,6 @@ exports.playlistsPost = function(req, res){
 			if(err){
 				console.log(err);
 			}
-			console.log(doc);
 			doc.layout = null;
 			return res.render('partials/playlist', doc);
 		});
@@ -146,8 +157,6 @@ exports.songsPost = function(req, res){
 					{$push : {playlists : req.params.plId}},
 					{multi : true},
 					function(err, songs){
-						console.log('SONGS UPDATED : ');
-						console.log(songs);
 						res.send(200);
 					});
 			});
@@ -169,7 +178,6 @@ exports.song = function(req, res){
  * POST song.
  */
 exports.songPost = function(req, res){
-	console.log(req.files);
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
@@ -189,9 +197,13 @@ exports.songPost = function(req, res){
 
 
 exports.salons = function(req, res){
-	req.app.locals.Playlist.find().exec(function(err, playlists){
-		res.render('salons', {playlists : playlists, salons : hashToArray(req.app.locals.salons)});
-	})
+	if(typeof req.session.user !== 'undefined'){
+		req.app.locals.Playlist.find().exec(function(err, playlists){
+			res.render('salons', {playlists : playlists, salons : hashToArray(req.app.locals.salons)});
+		});
+	}else{
+		res.redirect('/');
+	}
 }
 
 exports.salonsPost = function(req, res){

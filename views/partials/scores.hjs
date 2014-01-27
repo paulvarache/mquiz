@@ -17,4 +17,4 @@
         {{/users}}
     </tbody>
 </table>
-<button type='button' id='replay'>Rejouer</button>
+<button type='button' class='btn btn-primary' id='replay'>Rejouer</button>

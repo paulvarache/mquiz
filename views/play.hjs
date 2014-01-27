@@ -46,3 +46,11 @@
         </div>
     </div>
 </div>
+{{#yield-javascripts}}
+    <script type='text/javascript'>
+        var myId = '{{me.id}}';
+        var salonId = '{{salonid}}';
+    </script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/javascripts/app.js"></script>
+{{/yield-javascripts}}

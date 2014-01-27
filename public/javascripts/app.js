@@ -6,7 +6,6 @@ $(document).ready(function(){
 	* Connection to the io server
 	 */
 	var socket = io.connect('/');
-	var myId = '';
 	var playing;
 	var mySongList;
 	var currentSong;
@@ -33,24 +32,22 @@ $(document).ready(function(){
 		$('#response').focus();
 	});
 
-	/*
-	* On the login, the user id is stored and the song list is prepared.
-	 */
-	socket.on('logged', function(id){
-		myId = id;
-		$("#login-screen").fadeOut();
-		$("#usrlist").empty();
-		$.get('songlist', function(data){
-			$('#songlist').html(data);
-		});
-		$("#before-play").attr('style', '');
+	socket.emit('login', {userid : myId, salonid : salonId});
+	$.get('/songlist/'+salonId, function(data){
+		$('#songlist').html(data);
 	});
+	$("#before-play").attr('style', '');
+
+	$('#replay').click(function(){
+		socket.emit('replay');
+		location.reload();
+	})
 
 	/*
 	* When a new user connects, we add him on the user list.
 	 */
 	socket.on('newusr', function(user){
-		$.get('user/'+user.id, function(data){
+		$.get('user/'+user.id+'/salon/'+salonId, function(data){
 			if(user.id == myId){
 				$("#usrlist").prepend(data);
 			}else{
@@ -167,7 +164,7 @@ $(document).ready(function(){
 
 	socket.on('game-end', function(users){
 		if(myId != ''){
-			$.get('/scores', function(data){
+			$.get('/scores/'+salonId, function(data){
 				$('#end').html(data);
 			});
 			$('#score-table').tablesorter({sortList : [[1,0]]});

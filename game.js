@@ -17,15 +17,33 @@ var MServer = function(name, players, songlistId){
 		songlist = songs.shuffle();
 	});
 
+	var interval = null;
+
+	this.reinit = function(){
+		currentSong = 0;
+		Song.find().where({playlists : songlistId}).exec(function(err, songs){
+			songlist = songs.shuffle();
+		});
+		status = 'waiting-users';
+	}
+	this.setInterval = function(nInterval){
+		interval = nInterval;
+	};
+	this.getInterval = function(){
+		return interval;
+	}
+	this.isFull = function(){
+		return players === this.getConnectedUsers;
+	};
 	this.getConnectedUsers = function(){
 		return this.getUsersArray().length;
-	}
+	};
 	this.getMaxUsers = function(){
 		return players;
-	}
+	};
 	this.getId = function(){
 		return id;
-	}
+	};
 	this.getName = function(){
 		return name;
 	};
