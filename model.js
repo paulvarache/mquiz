@@ -10,7 +10,8 @@ var songSchema = new Schema({
 	title : String,
 	cover : String,
 	artist : String,
-	playlists : []
+	playlists : [],
+	random_point : []
 });
 
 var Playlist = mongoose.model('Playlist', playlistSchema);

@@ -39,6 +39,7 @@
 </div>
 <div class="row">
 	<div class="col-md-12" style="text-align: center">
+		<div id='error'></div>
 		<br/>
 		<button type="button" id="save-btn" class="btn btn-primary">Sauvegarder</button>
 	</div>

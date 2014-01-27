@@ -7,8 +7,11 @@ $(document).ready(function(){
 		e.preventDefault();
 		$('#playlist').find('.list-group-item').each(function(){
 			newPlaylist.push($(this).attr('id'));
-			console.log(newPlaylist);
 		});
+		if(newPlaylist.length < 5){
+			$('#error').html('La playlist doit contenir au moins 5 musiques');
+			return;
+		}
 		$.post(document.URL, {idList : newPlaylist}, function(data){
 			location.reload();
 		});

@@ -181,7 +181,9 @@ exports.songPost = function(req, res){
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
-		cover : req.body.cover});
+		cover : req.body.cover,
+		random_point : [Math.random(),0]
+	});
 	song.save(function(err, doc){
 			var fs = require('fs');
 			fs.readFile(req.files.song.path, function(err, data){
@@ -207,7 +209,7 @@ exports.salons = function(req, res){
 }
 
 exports.salonsPost = function(req, res){
-	var salon = new req.app.locals.MServer(req.body.name, req.body.players, req.body.playlist);
+	var salon = new req.app.locals.MServer(req.body.name, req.body.players, req.body.playlist, req.body.songlistLength);
 	req.app.locals.salons[salon.getId()] = salon;
 	//get connected user and move him from app to salon
 	res.redirect('/play/'+salon.getId());
