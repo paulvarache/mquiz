@@ -1,12 +1,13 @@
 /*
 * Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(name, players, songlistId, songlistLength){
+var MServer = function(name, type, players, songlistId, songlistLength){
 	var uuid = require('uuid');
 	var model = require('./model');
 	var Song = model.Song;
 	var Playlist = model.Playlist;
 	var id = uuid.v1();
+	var type = type;
 	var name = name;
 	var players = players;
 	var status = 'waiting-users';
@@ -16,11 +17,10 @@ var MServer = function(name, players, songlistId, songlistLength){
 	var songlist = [];
 	Song.find()
 		.where({playlists : songlistId})
-		.where({random_point : {$near : [Math.random(), 0]}})
 		.limit(songlistLength).exec(function(err, songs){
-			songlist = songs
+			songlist = songs.shuffle();
+			console.log(songlist);
 		});
-	console.log(songlist);
 
 	var interval = null;
 
@@ -28,12 +28,14 @@ var MServer = function(name, players, songlistId, songlistLength){
 		currentSong = 0;
 		Song.find()
 		.where({playlists : songlistId})
-		.where({random_point : {$near : [Math.random(), 0]}})
 		.limit(songlistLength).exec(function(err, songs){
 			songlist = songs.shuffle();
 		});
 		status = 'waiting-users';
 		console.log(songlist);
+	}
+	this.getType = function(){
+		return type;
 	}
 	this.setInterval = function(nInterval){
 		interval = nInterval;

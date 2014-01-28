@@ -25,6 +25,11 @@ var GameIO = function(salons, users, httpServer){
 				&& (salon.getStatus() !== 'waiting-users' && salon.getStatus() !== 'scores')){
 				io.sockets.emit('not-enough-players');
 			}
+			console.log('CHECK EMPTY');
+			if(salon.getConnectedUsers() === 0 && salon.getType() === 'custom'){
+				delete salon;
+				delete salons[salon.getId()];
+			}
 		});
 		socket.on('ready', function(){
 			me.ready = true;

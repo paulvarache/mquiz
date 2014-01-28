@@ -11,7 +11,6 @@ var songSchema = new Schema({
 	cover : String,
 	artist : String,
 	playlists : [],
-	random_point : []
 });
 
 var Playlist = mongoose.model('Playlist', playlistSchema);

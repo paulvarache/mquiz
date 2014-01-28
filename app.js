@@ -90,7 +90,7 @@ db.once('open', function(){
 	app.locals.MServer = game.MServer;
 
 	//Salon exemple
-	var mServer = new game.MServer('Salon test', 2, '52e13a37c1fff3a252f7578e', 5);
+	var mServer = new game.MServer('Salon test', 'native', 2, '52e13a37c1fff3a252f7578e', 5);
 
 	salons[mServer.getId()] = mServer;
 
