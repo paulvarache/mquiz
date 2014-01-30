@@ -3,6 +3,29 @@ $(document).ready(function(){
 	var tracks;
 	var artist;
 	var step = 'artist';
+
+
+	$('#title').focus(function(){
+		$('#customTitle').prop('disabled', true);
+		$('#customTitle').val('');
+	});
+
+	$('#title').focusout(function(){
+		$('#customTitle').prop('disabled', false);
+		$(this).prop('disabled', false);
+	});
+
+	$('#customTitle').focusout(function(){
+		$('#title').prop('disabled', false);
+		$(this).prop('disabled', false);
+	});
+
+	$('#customTitle').focus(function(){
+		$('#title').prop('disabled', true);
+		$('#title').val('');
+
+	});
+
 	$('#form').submit(function(e){
 		var parts = $('#song').val().split('.');
 		if(parts[parts.length - 1] !== 'mp3'){
@@ -14,6 +37,12 @@ $(document).ready(function(){
 		if(step === 'artist'){
 			getTracks();
 		}else if(step === 'title'){
+			var info
+			if($('#title').val() === ''){
+
+			}else{
+
+			}
 			var option = $('#track'+$('#title').val());
 			var info = option.data('info');
 			$.get('http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist='+info.artist+'&track='+info.track+reqEnd, function(data){
@@ -32,14 +61,18 @@ $(document).ready(function(){
 	$('#artist').keyup(function(){
 		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+$(this).val()+reqEnd, function(data){
 			console.log(data);
-			if($('#artist').val() !== ''){
-				$('#artist-name').html(data.artist.name);
-				$('#artist-image').attr('src', data.artist.image[4]['#text']);
+			if(typeof data.error === 'undefined'){
+				if($('#artist').val() !== ''){
+					$('#artist-name').html(data.artist.name);
+					$('#artist-image').attr('src', data.artist.image[4]['#text']);
+				}else{
+					$('#artist-name').html('');
+					$('#artist-image').attr('src', '');
+				}
+				artist = data.artist.name;
 			}else{
-				$('#artist-name').html('');
-				$('#artist-image').attr('src', '');
+				artist = $('#artist').val();
 			}
-			artist = data.artist.name;
 		});
 	});
 	$('#title').change(function(){

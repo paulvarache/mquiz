@@ -13,7 +13,8 @@
 			</div>
 
 			<div class="form-group" style="display : none" id="titleGroup">
-				<label for="title">Titre</label>
+				<label for="customTitle">Titre</label>
+				<input class="form-control" type="text" id="customTitle" name="customTitle" /><br/>
 				<select size="10" class="form-control" id="title"></select>
 			</div>
 
@@ -40,7 +41,7 @@
 	<div class="col-md-12">
 		<div class="playlist" id="playlist">
 			{{#songs}}
-			<div draggable="true" class="list-group-item song" id="{{id}}">
+			<div draggable="true" class="list-group-item song songInfo" id="{{id}}">
 				<img src="{{cover}}" width="40px"/>
 				<h5>{{title}}</h5>
 				<h6>{{artist}}</h6>

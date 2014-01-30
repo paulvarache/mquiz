@@ -50,3 +50,7 @@ div.sortable-placeholder{
 	display: inline-block;
 	margin: 5px;
 }
+.songInfo{
+	max-width: 150px;
+	background-color: #EFEFEF;
+}

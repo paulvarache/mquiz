@@ -17,8 +17,9 @@ var MServer = function(name, type, players, songlistId, songlistLength){
 	var songlist = [];
 	Song.find()
 		.where({playlists : songlistId})
-		.limit(songlistLength).exec(function(err, songs){
+		.exec(function(err, songs){
 			songlist = songs.shuffle();
+			songlist = songlist.slice(0, songlistLength);
 			console.log(songlist);
 		});
 
@@ -102,7 +103,7 @@ var MServer = function(name, type, players, songlistId, songlistLength){
 		var song = songlist[currentSong].title;
 		var levenshtein = require('levenshtein');
 		var max = response.length > song.length ? response.length : song.length;
-		var l = new levenshtein(response.toLowerCase(), song.toLowerCase());
+		var l = new levenshtein(response.toLowerCase(), song.toLowerCase().replace(/\s*\(.*?\)\s*/g, ''));
 		var success = max * 0.8;
 		console.log('RESULT: '+(max - l.distance)+'/'+max);
 		console.log('GOAL: '+success+'/'+max);

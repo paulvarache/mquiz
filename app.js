@@ -34,7 +34,7 @@ app.use(express.logger('dev'));
 app.use(express.methodOverride());
 app.use(express.limit('15mb'));
 app.use(express.cookieParser());
-app.use(express.cookieSession({secret : "BLAHBLAH"}));
+app.use(express.session({secret : "BLAHBLAH"}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
