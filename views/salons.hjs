@@ -1,20 +1,42 @@
 <div class="container">
+	<h3>Salons ouverts</h3>
 	<ul class="list-group">
 		{{#salons}}
 		<li class="list-group-item">
-			{{#needPassword}}
-			<a href='#' class='passwd-link' id="{{getId}}">{{getName}}</a>*<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-			<div class="row-fluid" id="form-{{getId}}" style="display: none">
-				<label for='name' class='inline-label'>Mot de passe</label>
-				<input type="password" class="form-control inline-form-control inline-input" id="passwd-{{getId}}" placeholder="Mot de passe" />
-				<button type="button" id='{{getId}}' class="btn btn-default connect inline-form-control">Go !</button>
-			</div>
-			{{/needPassword}}
-			{{^needPassword}}
+			{{#isFull}}
+			{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+			{{/isFull}}
+			{{^isFull}}
 			<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-			{{/needPassword}}
+			{{/isFull}}
 		</li>
 		{{/salons}}
+	</ul>
+	<h3>Entre amis</h3>
+	<ul class="list-group">
+		{{#customSalons}}
+		<li class="list-group-item">
+			{{^isFull}}
+				{{#needPassword}}
+				<a href='#' class='passwd-link' id="{{getId}}">{{getName}}</a> *<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+				<div class="row-fluid" id="form-{{getId}}" style="display: none">
+					<label for='name' class='inline-label'>Mot de passe</label>
+					<input type="password" class="form-control inline-form-control inline-input" id="passwd-{{getId}}" placeholder="Mot de passe" />
+					<button type="button" id='{{getId}}' class="btn btn-default connect inline-form-control">Go !</button>
+				</div>
+				{{/needPassword}}
+				{{^needPassword}}
+				<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+				{{/needPassword}}
+			{{/isFull}}
+			{{#isFull}}
+				{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+			{{/isFull}}
+		</li>
+		{{/customSalons}}
+		{{^customSalons}}
+			<h5>Aucun salon</h5>
+		{{/customSalons}}
 	</ul>
 	<button type="button" class="btn btn-default" id="add-salon">Nouveau salon</button>
 	<form action="/salons" method="POST" role="form" id="salonForm" style="display : none">

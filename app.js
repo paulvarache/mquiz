@@ -90,11 +90,17 @@ db.once('open', function(){
 	app.locals.users = users;
 	app.locals.MServer = game.MServer;
 
-	//Salon exemple
-	var mServer = new game.MServer('Salon test', 'native', 2, '52e13a37c1fff3a252f7578e', 5, 'test');
+	Playlist.find().exec(function(err, docs){
 
-	salons[mServer.getId()] = mServer;
+		for(var i=0; i<docs.length; i++){
+			//Salon exemple
+			var mServer = new game.MServer(docs[i].name, 'native', 2, docs[i].id, 5);
 
-	var io = require('./gameio');
-	var gameio = new io.GameIO(salons, users, httpServer);
+			salons[mServer.getId()] = mServer;
+		}
+
+		var io = require('./gameio');
+		var gameio = new io.GameIO(salons, users, httpServer);
+	});
+
 });

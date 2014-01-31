@@ -13,7 +13,7 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 	var status = 'waiting-users';
 	var users = {};
 	var currentSong = 0;
-	var password = password;
+	var password = password || '';
 	var songlistLength = songlistLength;
 	var songlist = [];
 	Song.find()
@@ -36,6 +36,12 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 		status = 'waiting-users';
 		console.log(songlist);
 	}
+	this.newId = function(){
+		id = uuid.v1();
+	}
+	this.getSonglistId = function(){
+		return songlistId;
+	}
 	this.needPassword = function(){
 		return !(password === '');
 	}
@@ -52,7 +58,7 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 		return interval;
 	}
 	this.isFull = function(){
-		return players === this.getConnectedUsers;
+		return players === this.getConnectedUsers();
 	};
 	this.getConnectedUsers = function(){
 		return this.getUsersArray().length;

@@ -40,7 +40,16 @@ exports.indexPost = function(req, res){
 };
 
 exports.play = function(req, res){
-	return res.render('play', {salonid : req.params.salonid, me : req.session.user});
+	var salon = req.app.locals.salons[req.params.salonid];
+	if(salon.isFull()){
+		res.redirect('/salons');
+	}else{
+		if(salon.getConnectedUsers() + 1 == salon.getMaxUsers() && salon.getType() !== 'custom'){
+			var nSalon = new req.app.locals.MServer(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
+			req.app.locals.salons[nSalon.getId()] = nSalon;
+		}
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user});
+	}
 }
 
 /*
@@ -62,7 +71,7 @@ exports.songlist = function(req, res){
 		return res.end('<script>location.href="/salons";</script>');
 	};
 	var songs = salon.getSonglist();
-	return res.render('partials/songs', {songs: songs, layout : null}); 
+	return res.render('partials/songs', {songs: songs, layout : null});
 }
 
 /*
@@ -199,8 +208,18 @@ exports.songPost = function(req, res){
 
 exports.salons = function(req, res){
 	if(typeof req.session.user !== 'undefined'){
+		var s = [];
+		var cs = [];
+		var salons = req.app.locals.salons;
+		for(var k in salons){
+			if(salons[k].getType() === 'custom'){
+				cs.push(salons[k]);
+			}else{
+				s.push(salons[k]);
+			}
+		}
 		req.app.locals.Playlist.find().exec(function(err, playlists){
-			res.render('salons', {playlists : playlists, salons : hashToArray(req.app.locals.salons)});
+			res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
 		});
 	}else{
 		res.redirect('/');
