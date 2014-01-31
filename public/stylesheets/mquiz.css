@@ -54,3 +54,12 @@ div.sortable-placeholder{
 	max-width: 150px;
 	background-color: #EFEFEF;
 }
+.inline-label{
+	display : block;
+}
+.inline-form-control{
+	display: inline-block;
+}
+.inline-input{
+	width: 50%;
+}

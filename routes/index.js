@@ -208,8 +208,17 @@ exports.salons = function(req, res){
 }
 
 exports.salonsPost = function(req, res){
-	var salon = new req.app.locals.MServer(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength);
+	var salon = new req.app.locals.MServer(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength, req.body.password);
 	req.app.locals.salons[salon.getId()] = salon;
 	//get connected user and move him from app to salon
 	res.redirect('/play/'+salon.getId());
+}
+
+exports.checkPasswd = function(req, res){
+	var salon = req.app.locals.salons[req.params.salonid];
+	var response = {
+		id : salon.getId()
+	};
+	response.access = salon.checkPasswd(req.params.password) ? 'granted' : 'refused';
+	res.json(response);
 }

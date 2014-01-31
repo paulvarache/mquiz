@@ -1,7 +1,7 @@
 /*
 * Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(name, type, players, songlistId, songlistLength){
+var MServer = function(name, type, players, songlistId, songlistLength, password){
 	var uuid = require('uuid');
 	var model = require('./model');
 	var Song = model.Song;
@@ -13,6 +13,7 @@ var MServer = function(name, type, players, songlistId, songlistLength){
 	var status = 'waiting-users';
 	var users = {};
 	var currentSong = 0;
+	var password = password;
 	var songlistLength = songlistLength;
 	var songlist = [];
 	Song.find()
@@ -34,6 +35,12 @@ var MServer = function(name, type, players, songlistId, songlistLength){
 		});
 		status = 'waiting-users';
 		console.log(songlist);
+	}
+	this.needPassword = function(){
+		return !(password === '');
+	}
+	this.checkPasswd = function(nPassword){
+		return (nPassword === password);
 	}
 	this.getType = function(){
 		return type;

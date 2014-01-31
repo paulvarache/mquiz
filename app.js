@@ -59,6 +59,7 @@ app.post('/song', routes.songPost);
 app.get('/salons', routes.salons);
 app.post('/salons', routes.salonsPost);
 app.get('/play/:salonid', routes.play);
+app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -90,7 +91,7 @@ db.once('open', function(){
 	app.locals.MServer = game.MServer;
 
 	//Salon exemple
-	var mServer = new game.MServer('Salon test', 'native', 2, '52e13a37c1fff3a252f7578e', 5);
+	var mServer = new game.MServer('Salon test', 'native', 2, '52e13a37c1fff3a252f7578e', 5, 'test');
 
 	salons[mServer.getId()] = mServer;
 
