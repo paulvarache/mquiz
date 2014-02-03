@@ -1,4 +1,13 @@
 $(document).ready(function(){
+
+  $.get('https://api.github.com/repos/paulvarache/mquiz/git/refs/heads/master', function(data){
+    var id = data.object.sha;
+    $.get('https://api.github.com/repos/paulvarache/mquiz/git/commits/'+id, function(lastCommit){
+      console.log(lastCommit);
+      $('#last-commit').html('Derniers ajouts: '+lastCommit.message);
+    })
+  })
+
 	/*
 	* Preparation of the avatar section
 	 */
