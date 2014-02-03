@@ -65,12 +65,11 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-
 /*
 * Connexion a la base de données
 */
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/mquiz');
+mongoose.connect('mongodb://mquizapp:3103dlccab@ds027409.mongolab.com:27409/heroku_app21876417');
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, "Connection error"));

@@ -48,7 +48,7 @@ exports.play = function(req, res){
 			var nSalon = new req.app.locals.MServer(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
-		return res.render('play', {salonid : req.params.salonid, me : req.session.user});
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray()});
 	}
 }
 

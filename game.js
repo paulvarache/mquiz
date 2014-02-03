@@ -87,6 +87,9 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 	this.getSonglist = function(){
 		return songlist;
 	};
+	this.getSonglistArray = function(){
+		return this.hashToArray(songlist);
+	};
 	this.getCurrentSongIndex = function(){
 		return songlist[currentSong].id
 	};

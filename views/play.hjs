@@ -8,6 +8,11 @@
         </div>
         <div class="col-md-8">
             <div class="container-fluid" id="game">
+                <div id="remSongs">
+                    {{#songs}}
+                        <img id="rem-{{id}}" class="remSong img-responsive" src="/images/qmark.png" width="70px"/>
+                    {{/songs}}
+                </div>
                 <div id='before-play' class='panel'>
                     <h3>Vous avez rejoint la partie. Pour commencer cliquez sur "READY !"</h3>
                     <button class="btn btn-primary btn-lg" id="ready-btn">READY !</button>
@@ -37,7 +42,15 @@
                     </div>
                 </div>
                 <div id="end" class='panel'></div>
-                <div id="songlist"></div>
+                <div id="songlist">
+                    {{#songs}}
+                    <div style="display:none">
+                        <audio id="{{id}}" preload="auto">
+                        <source src="/audio/{{id}}.mp3" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    {{/songs}}
+                </div>
             </div>
         </div>
         <div class="col-md-2">

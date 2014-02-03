@@ -33,11 +33,7 @@ $(document).ready(function(){
 	});
 
 	socket.emit('login', {userid : myId, salonid : salonId});
-	$.get('/songlist/'+salonId, function(data){
-		$('#songlist').html(data);
-	});
 	$("#before-play").attr('style', '');
-
 	$('#replay').click(function(){
 		socket.emit('replay');
 		location.reload();
@@ -135,7 +131,12 @@ $(document).ready(function(){
 				html = $(data);
 				html.find('#foundby').html('Trouvé par '+winner.pseudo);
 				$('#last-songs').hide().prepend(html[0]).fadeIn();
-			})
+			});
+			if(winner.id === myId){
+				$('#rem-'+$(playing).attr('id')).html('V');
+			}else{
+				$('#rem-'+$(playing).attr('id')).html('X');
+			}
 			playing.pause();
 			playing.parentNode.remove();
 			showOnly('wait', 'panel');

@@ -4,10 +4,10 @@
 		{{#salons}}
 		<li class="list-group-item">
 			{{#isFull}}
-			{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+				{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
 			{{/isFull}}
 			{{^isFull}}
-			<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+				<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
 			{{/isFull}}
 		</li>
 		{{/salons}}
