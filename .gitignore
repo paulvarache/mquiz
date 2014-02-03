@@ -6,3 +6,4 @@ public/audio/*
 public/cover/*
 data/*
 node_modules/*
+tmp/*
