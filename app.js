@@ -19,6 +19,7 @@ var path = require('path');
 var uuid = require('uuid');
 var crypto = require('crypto');
 var game = require('./game');
+var knox = require('knox');
 var app = express();
 
 // all environments
@@ -69,7 +70,7 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
 * Connexion a la base de données
 */
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://mquizapp:3103dlccab@ds027409.mongolab.com:27409/heroku_app21876417');
+mongoose.connect('mongodb://mquizapp:3103dlccab@ds029979.mongolab.com:29979/heroku_app21788699');
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, "Connection error"));
@@ -88,6 +89,7 @@ db.once('open', function(){
 	app.locals.salons = salons;
 	app.locals.users = users;
 	app.locals.MServer = game.MServer;
+	app.locals.knox = knox;
 
 	Playlist.find().exec(function(err, docs){
 

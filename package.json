@@ -13,6 +13,7 @@
     "levenshtein" : "*",
     "crypto" : "*",
     "mongodb": "*",
-    "mongoose" : "*"
+    "mongoose" : "*",
+    "knox" : "*"
   }
 }

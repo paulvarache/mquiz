@@ -187,24 +187,27 @@ exports.song = function(req, res){
  * POST song.
  */
 exports.songPost = function(req, res){
+	var s3 = req.app.locals.knox.createClient({
+		key : 'AKIAJKY4FPL5LUQUIBNQ',
+		secret: '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',
+		bucket: 'mquiz'
+	});
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
 		cover : req.body.cover
 	});
 	song.save(function(err, doc){
-			var fs = require('fs');
-			fs.readFile(req.files.song.path, function(err, data){
-				var newpath = __dirname+'/../public/audio/'+doc._id+'.mp3';
-				fs.writeFile(newpath, data, function(err){
-					fs.unlink(req.files.song.path, function(){
-						res.redirect('/song');
-					});
-				});
-			});
+		var song = req.files.song;
+		var s3Headers = {
+			'Content-Type': song.type,
+			'x-amz-acl': 'public-read'
+		};
+		s3.putFile(song.path, doc.id + '.mp3', s3Headers, function(err, response){
+			res.redirect('/song');
 		});
+	});
 }
-
 
 exports.salons = function(req, res){
 	if(typeof req.session.user !== 'undefined'){
