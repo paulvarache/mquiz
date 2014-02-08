@@ -87,16 +87,16 @@ db.once('open', function(){
 
 	app.locals.salons = salons;
 	app.locals.users = users;
-	app.locals.MServer = game.MServer;
+	app.locals.Salon = game.Salon;
 	app.locals.knox = knox;
 
 	Playlist.find().exec(function(err, docs){
 
 		for(var i=0; i<docs.length; i++){
 			//Salon exemple
-			var mServer = new game.MServer(docs[i].name, 'native', 2, docs[i].id, 5);
+			var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
 
-			salons[mServer.getId()] = mServer;
+			salons[salon.getId()] = salon;
 		}
 
 		var io = require('./gameio');
