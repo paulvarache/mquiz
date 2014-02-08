@@ -1,7 +1,7 @@
 /*
-* Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
+* Definition de la classe Salon. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(name, type, players, songlistId, songlistLength, password){
+var Salon = function(name, type, players, songlistId, songlistLength, password){
 	var uuid = require('uuid');
 	var model = require('./model');
 	var Song = model.Song;
@@ -149,4 +149,4 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 	}
 };
 
-exports.MServer = MServer;
+exports.Salon = Salon;

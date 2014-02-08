@@ -47,7 +47,7 @@ exports.play = function(req, res){
 		res.redirect('/salons');
 	}else{
 		if(salon.getConnectedUsers() + 1 == salon.getMaxUsers() && salon.getType() !== 'custom'){
-			var nSalon = new req.app.locals.MServer(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
+			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
 		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray()});
@@ -232,7 +232,7 @@ exports.salons = function(req, res){
 }
 
 exports.salonsPost = function(req, res){
-	var salon = new req.app.locals.MServer(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength, req.body.password);
+	var salon = new req.app.locals.Salon(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength, req.body.password);
 	req.app.locals.salons[salon.getId()] = salon;
 	//get connected user and move him from app to salon
 	res.redirect('/play/'+salon.getId());
