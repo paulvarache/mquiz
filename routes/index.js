@@ -6,6 +6,9 @@ var hashToArray = function(hash){
 	return ar;
 }
 
+var uuid = require('uuid');
+var crypto = require('crypto');
+
 
 /*
  * GET home page.
@@ -20,7 +23,6 @@ exports.index = function(req, res){
 };
 
 exports.indexPost = function(req, res){
-	var uuid = require('uuid');
 	var avatar = '';
 	if(req.body.gravatar != ''){
 		avatar = '<img src="http://www.gravatar.com/avatar/'+crypto.createHash('md5').update(req.body.gravatar).digest('hex')+'" />';

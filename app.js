@@ -17,7 +17,6 @@ var routes = require('./routes');
 var http = require('http');
 var path = require('path');
 var uuid = require('uuid');
-var crypto = require('crypto');
 var game = require('./game');
 var knox = require('knox');
 var app = express();
