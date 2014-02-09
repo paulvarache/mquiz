@@ -9,17 +9,12 @@ var hashToArray = function(hash){
 var uuid = require('uuid');
 var crypto = require('crypto');
 
-
 /*
  * GET home page.
  */
 
 exports.index = function(req, res){
-	if(typeof req.session.user === 'undefined'){
-		res.render('index', { title: 'Express' });
-	}else{
-		res.redirect('/salons');
-	}
+	res.render('index', { title: 'Express' });
 };
 
 exports.indexPost = function(req, res){
@@ -212,23 +207,19 @@ exports.songPost = function(req, res){
 }
 
 exports.salons = function(req, res){
-	if(typeof req.session.user !== 'undefined'){
-		var s = [];
-		var cs = [];
-		var salons = req.app.locals.salons;
-		for(var k in salons){
-			if(salons[k].getType() === 'custom'){
-				cs.push(salons[k]);
-			}else{
-				s.push(salons[k]);
-			}
+	var s = [];
+	var cs = [];
+	var salons = req.app.locals.salons;
+	for(var k in salons){
+		if(salons[k].getType() === 'custom'){
+			cs.push(salons[k]);
+		}else{
+			s.push(salons[k]);
 		}
-		req.app.locals.Playlist.find().exec(function(err, playlists){
-			res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
-		});
-	}else{
-		res.redirect('/');
 	}
+	req.app.locals.Playlist.find().exec(function(err, playlists){
+		res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
+	});
 }
 
 exports.salonsPost = function(req, res){

@@ -21,7 +21,6 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		.exec(function(err, songs){
 			songlist = songs.shuffle();
 			songlist = songlist.slice(0, songlistLength);
-			console.log(songlist);
 		});
 
 	var interval = null;
@@ -34,7 +33,6 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 			songlist = songs.shuffle();
 		});
 		status = 'waiting-users';
-		console.log(songlist);
 	}
 	this.newId = function(){
 		id = uuid.v1();

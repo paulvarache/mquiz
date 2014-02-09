@@ -19,6 +19,8 @@ var path = require('path');
 var uuid = require('uuid');
 var game = require('./game');
 var knox = require('knox');
+var authorize = require('./authorize');
+
 var app = express();
 
 // all environments
@@ -28,13 +30,13 @@ app.set('view engine', 'hjs');
 app.engine('hjs', require('hogan-express'));
 app.set('layout', 'base');
 app.set('partials', {playlist : "partials/playlist"});
+app.use(express.logger('dev'));
 app.use(express.bodyParser({uploadDir : 'tmp'}));
 app.use(express.favicon());
-app.use(express.logger('dev'));
 app.use(express.methodOverride());
-app.use(express.limit('15mb'));
 app.use(express.cookieParser());
 app.use(express.session({secret : "BLAHBLAH"}));
+app.use(authorize());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
