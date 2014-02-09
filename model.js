@@ -15,7 +15,7 @@ var songSchema = new Schema({
 var adjectifSchema = new Schema({
 	base : String,
 	feminin : String,
-	rand : {type : Number, index : true}
+	random : {type : Number, index : true}
 });
 
 var Playlist = mongoose.model('Playlist', playlistSchema);
