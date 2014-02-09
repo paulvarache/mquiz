@@ -12,9 +12,16 @@ var songSchema = new Schema({
 	artist : String,
 	playlists : [],
 });
+var adjectifSchema = new Schema({
+	base : String,
+	feminin : String,
+	random : {type : Number, index : true}
+});
 
 var Playlist = mongoose.model('Playlist', playlistSchema);
 var Song = mongoose.model('Song', songSchema);
+var Adjectif = mongoose.model('Adjectif', adjectifSchema);
 
 exports.Song = Song;
 exports.Playlist = Playlist;
+exports.Adjectif = Adjectif;

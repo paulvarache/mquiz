@@ -6,21 +6,20 @@ var hashToArray = function(hash){
 	return ar;
 }
 
+var uuid = require('uuid');
+var crypto = require('crypto');
+var config = require('konphyg')(__dirname + '/../config');
+var s3Config = config('amazons3');
 
 /*
  * GET home page.
  */
 
 exports.index = function(req, res){
-	if(typeof req.session.user === 'undefined'){
-		res.render('index', { title: 'Express' });
-	}else{
-		res.redirect('/salons');
-	}
+	res.render('index', { title: 'Express' });
 };
 
 exports.indexPost = function(req, res){
-	var uuid = require('uuid');
 	var avatar = '';
 	if(req.body.gravatar != ''){
 		avatar = '<img src="http://www.gravatar.com/avatar/'+crypto.createHash('md5').update(req.body.gravatar).digest('hex')+'" />';
@@ -45,7 +44,7 @@ exports.play = function(req, res){
 		res.redirect('/salons');
 	}else{
 		if(salon.getConnectedUsers() + 1 == salon.getMaxUsers() && salon.getType() !== 'custom'){
-			var nSalon = new req.app.locals.MServer(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
+			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
 		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray()});
@@ -187,11 +186,7 @@ exports.song = function(req, res){
  * POST song.
  */
 exports.songPost = function(req, res){
-	var s3 = req.app.locals.knox.createClient({
-		key : 'AKIAJKY4FPL5LUQUIBNQ',
-		secret: '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',
-		bucket: 'mquiz'
-	});
+	var s3 = req.app.locals.knox.createClient(s3Config);
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
@@ -210,27 +205,23 @@ exports.songPost = function(req, res){
 }
 
 exports.salons = function(req, res){
-	if(typeof req.session.user !== 'undefined'){
-		var s = [];
-		var cs = [];
-		var salons = req.app.locals.salons;
-		for(var k in salons){
-			if(salons[k].getType() === 'custom'){
-				cs.push(salons[k]);
-			}else{
-				s.push(salons[k]);
-			}
+	var s = [];
+	var cs = [];
+	var salons = req.app.locals.salons;
+	for(var k in salons){
+		if(salons[k].getType() === 'custom'){
+			cs.push(salons[k]);
+		}else{
+			s.push(salons[k]);
 		}
-		req.app.locals.Playlist.find().exec(function(err, playlists){
-			res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
-		});
-	}else{
-		res.redirect('/');
 	}
+	req.app.locals.Playlist.find().exec(function(err, playlists){
+		res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
+	});
 }
 
 exports.salonsPost = function(req, res){
-	var salon = new req.app.locals.MServer(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength, req.body.password);
+	var salon = new req.app.locals.Salon(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength, req.body.password);
 	req.app.locals.salons[salon.getId()] = salon;
 	//get connected user and move him from app to salon
 	res.redirect('/play/'+salon.getId());

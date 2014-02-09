@@ -8,13 +8,20 @@ var GameIO = function(salons, users, httpServer){
 			me = users[data.userid];
 			salon = salons[data.salonid];
 			delete users[data.userid];
-			var salonUsers = salon.getUsers();
-			for(var k in salonUsers){
-				socket.emit('newusr', salonUsers[k]);
+			var emitNewUsr = function(){
+				var salonUsers = salon.getUsers();
+				for(var k in salonUsers){
+					socket.emit('newusr', salonUsers[k]);
+				}
+				io.sockets.emit('newusr', me);
+				socket.emit('logged', me.id);
+				salon.addUser(me);
 			}
-			io.sockets.emit('newusr', me);
-			socket.emit('logged', me.id);
-			salon.addUser(me);
+			if(salon.checkDuplicateName(me)){
+				salon.changeName(me, emitNewUsr);
+			}else{
+				emitNewUsr();
+			}
 		});
 		socket.on('disconnect', function(){
 			if(!me) return;

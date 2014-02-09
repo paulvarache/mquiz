@@ -1,7 +1,7 @@
 /*
-* Definition de la classe MServer. Elle gère les utilisateurs et la playlist.
+* Definition de la classe Salon. Elle gère les utilisateurs et la playlist.
  */
-var MServer = function(name, type, players, songlistId, songlistLength, password){
+var Salon = function(name, type, players, songlistId, songlistLength, password){
 	var uuid = require('uuid');
 	var model = require('./model');
 	var Song = model.Song;
@@ -21,7 +21,6 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 		.exec(function(err, songs){
 			songlist = songs.shuffle();
 			songlist = songlist.slice(0, songlistLength);
-			console.log(songlist);
 		});
 
 	var interval = null;
@@ -34,7 +33,21 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 			songlist = songs.shuffle();
 		});
 		status = 'waiting-users';
-		console.log(songlist);
+	}
+	this.changeName = function(newUsr, callback){
+		var adjectif = require('./adjectif');
+		adjectif.getName(newUsr.pseudo, false, function(name){
+			newUsr.pseudo = name;
+			callback();
+		});
+	}
+	this.checkDuplicateName = function(newUsr){
+		for(var k in users){
+			if(users[k].pseudo === newUsr.pseudo){
+				return true;
+			}
+		}
+		return false;
 	}
 	this.newId = function(){
 		id = uuid.v1();
@@ -149,4 +162,4 @@ var MServer = function(name, type, players, songlistId, songlistLength, password
 	}
 };
 
-exports.MServer = MServer;
+exports.Salon = Salon;

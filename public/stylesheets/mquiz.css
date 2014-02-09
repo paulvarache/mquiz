@@ -74,13 +74,11 @@ div.sortable-placeholder{
 }
 .remSong{
 	display: inline-block;
-	border: 1px dashed grey;
-	border-radius: 1px;
-	color: grey;
 	text-align: center;
 }
 .app{
 	max-height: 100vh;
+	margin-top: 50px;
 }
 #last-songs{
 	overflow-y: auto;
@@ -89,4 +87,12 @@ div.sortable-placeholder{
 }
 row{
 	max-height: 100vh;
+}
+.score-plus{
+	position: absolute;
+	z-index: 100;
+	-webkit-transform: rotate(-10deg);
+	-moz-transform: rotate(-10deg);
+	-o-transform: rotate(-10deg);
+	text-shadow: black 0.1em 0.1em 0.2em
 }

@@ -1,6 +1,15 @@
 $(document).ready(function(){
 
-	showOnly('', 'panel');
+	$(".panel").hide();
+	showOnly('before-play', 'panel');
+
+	var resetScorePlusPosition = function(){
+		$('#score-plus').css('top', parseInt(window.innerHeight) / 2+'px').css('left', parseInt(window.innerWidth) / 2+'px');
+		$('#score-plus').css('margin-top', '-'+parseInt($('#score-plus').height()) / 2+'px').css('margin-left', '-'+parseInt($('#score-plus').width()) / 2+'px');
+		$('#score-plus').css('font-size', '100000%');
+	}
+
+	resetScorePlusPosition();
 
 	/*
 	* Connection to the io server
@@ -61,11 +70,14 @@ $(document).ready(function(){
 		});
 	});
 
+	$('#remSongs').children().tooltip({trigger : 'manual'});
+
 
 	/*
 	* When the game starts, we play the song and display the answer button.
 	 */
 	socket.on('play', function(song_id){
+		$('#rem-'+song_id).tooltip('show');
 		if(myId != ''){
 			console.log('PLAY');
 			currentSong = song_id;
@@ -107,7 +119,6 @@ $(document).ready(function(){
 	socket.on('penalite', function(){
 		if(myId != ''){
 			showOnly('penalite', 'panel');
-			$('#penalite-bar').css('width', '0%').animate({width: '100%'},2000);
 			setTimeout(function(){
 				showOnly('playing', 'panel');
 			},2000);
@@ -133,14 +144,21 @@ $(document).ready(function(){
 				$('#last-songs').hide().prepend(html[0]).fadeIn();
 			});
 			if(winner.id === myId){
-				$('#rem-'+$(playing).attr('id')).html('V');
+				$('#rem-'+$(playing).attr('id')).attr('src', '/images/check.png');
+				$('#score-plus').fadeIn().animate({"font-size" : "1000%", "margin-top": "-200px", "margin-left": "-80px"}, {duration: 500, complete: function(){
+					setTimeout(function(){
+						$('#score-plus').fadeOut(function(){
+							resetScorePlusPosition();
+						});
+					},3000);
+				}});
 			}else{
-				$('#rem-'+$(playing).attr('id')).html('X');
+				$('#rem-'+$(playing).attr('id')).attr('src', '/images/wrong.png');
 			}
+			$('#rem-'+$(playing).attr('id')).tooltip('hide').attr('data-toggle', '');
 			playing.pause();
 			playing.parentNode.remove();
 			showOnly('wait', 'panel');
-			$('#waiting-next-song').css('width', '0%').animate({width: '100%'},5000);
 		}
 	});
 
@@ -159,7 +177,6 @@ $(document).ready(function(){
 			showOnly('wait', 'panel');
 			$('#response').fadeIn();
 			$('#submit-response').html('STOP').prop('disable', false);
-			$('#waiting-next-song').css('width', '0%').animate({width: '100%'}, 5000);
 		}
 	});
 
@@ -217,8 +234,9 @@ function defaultAvatarAutoHide(value){
 }
 
 function showOnly(id, multi){
-	$('.'+multi).each(function(){
-		$(this).hide();
+	$('#'+id).fadeIn();
+	$('.'+multi).not('#'+id).each(function(){
+		console.log($(this));
+		$(this).fadeOut();
 	});
-	$('#'+id).show();
 }
