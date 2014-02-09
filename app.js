@@ -82,7 +82,6 @@ db.on('error', console.error.bind(console, "Connection error"));
 db.once('open', function(){
 
 	var model = require('./model');
-	var adjectif = require('./adjectif');
 	var Song = model.Song;
 	var Playlist = model.Playlist;
 
