@@ -1,4 +1,5 @@
 <div class='app'>
+    <div id="score-plus" class='text-success score-plus' style="display: none">+1</div>
     <div class="row">
         <div class="col-md-2">
         	<h3>Liste des participants</h3>
@@ -10,7 +11,7 @@
             <div class="container-fluid" id="game">
                 <div id="remSongs">
                     {{#songs}}
-                        <img id="rem-{{id}}" class="remSong img-responsive" src="/images/qmark.png" width="70px"/>
+                        <img id="rem-{{id}}" data-toggle="tooltip" data-placement="top" class="remSong img-responsive" src="/images/qmark.png" width="70px" title=" "/>
                     {{/songs}}
                 </div>
                 <div id='before-play' class='panel'>
@@ -27,7 +28,7 @@
                 <div id="penalite" class="panel">
                 	<h2>Pénalité</h2>
                     <div class="progress progress-striped active">
-                        <div id='penalite-bar' class="progress-bar progress-bar-danger" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
+                        <div id='penalite-bar' class="progress-bar progress-bar-danger" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 100%">
                         </div>
                     </div>
                 </div>
@@ -37,7 +38,7 @@
                 <div id="wait" class='panel'>
                     <h2>En attente de la chanson suivante...</h2>
                     <div class="progress progress-striped active">
-                        <div id='waiting-next-song' class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 0%">
+                        <div id='waiting-next-song' class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 100%">
                         </div>
                     </div>
                 </div>

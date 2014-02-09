@@ -8,6 +8,8 @@ var hashToArray = function(hash){
 
 var uuid = require('uuid');
 var crypto = require('crypto');
+var config = require('konphyg')(__dirname + '/../config');
+var s3Config = config('amazons3');
 
 /*
  * GET home page.
@@ -184,11 +186,7 @@ exports.song = function(req, res){
  * POST song.
  */
 exports.songPost = function(req, res){
-	var s3 = req.app.locals.knox.createClient({
-		key : 'AKIAJKY4FPL5LUQUIBNQ',
-		secret: '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',
-		bucket: 'mquiz'
-	});
+	var s3 = req.app.locals.knox.createClient(s3Config);
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
