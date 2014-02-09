@@ -31,8 +31,11 @@ $(document).ready(function(){
 		if(parts[parts.length - 1] !== 'mp3'){
 			e.preventDefault();
 			console.log('mp3 only');
+		}else{
+			$(this).fadeOut();
+			$(this).parent().append('<h4>Envoi en cours...</h4>');
 		}
-	})
+	});
 	$('#next').click(function(){
 		if(step === 'artist'){
 			getTracks();

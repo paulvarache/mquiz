@@ -34,6 +34,21 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		});
 		status = 'waiting-users';
 	}
+	this.changeName = function(newUsr, callback){
+		var adjectif = require('./adjectif');
+		adjectif.getName(newUsr.pseudo, false, function(name){
+			newUsr.pseudo = name;
+			callback();
+		});
+	}
+	this.checkDuplicateName = function(newUsr){
+		for(var k in users){
+			if(users[k].pseudo === newUsr.pseudo){
+				return true;
+			}
+		}
+		return false;
+	}
 	this.newId = function(){
 		id = uuid.v1();
 	}
