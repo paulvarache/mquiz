@@ -21,7 +21,7 @@
     <br/>
     <h5>Site créé par Paul Varache toujours en cours de développement.</h5>
     <h5 id="last-commit"></h5>
-    <h5>Sources sur <a href="https://github.com/paulvarache/mquiz">GitHub</h5>
+    <h5>Sources sur <a href="https://github.com/paulvarache/mquiz">GitHub</a></h5>
 </div>
 {{#yield-javascripts}}
     <script type="text/javascript" src="/javascripts/index.js"></script>
