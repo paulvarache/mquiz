@@ -149,9 +149,17 @@ var vowels = ['a', 'e', 'i', 'o', 'u', 'y', 'é', 'è', 'h'];
 var endings = ['x', 'f'];
 
 exports.populate = function(){
-	for(var i = 0; i < adjList.length; i++){
-		adjList[i].save();
-	}
+	console.log('Populating adjectif collection...');
+	Adjectif.find().exec(function(err, docs){
+		if(docs === null){
+			for(var i = 0; i < adjList.length; i++){
+				adjList[i].save();
+			}
+			console.log('Adjetif collection populated');
+		}else{
+			console.log('Adjectif collection is not empty');
+		}
+	});
 }
 
 exports.empty = function(){
