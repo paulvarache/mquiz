@@ -67,6 +67,9 @@ app.post('/salons', routes.salonsPost);
 app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 
+var adjectif = require('./adjectif');
+adjectif.populate();
+
 var httpServer = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
