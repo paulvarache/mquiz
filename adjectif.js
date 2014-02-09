@@ -151,11 +151,11 @@ var endings = ['x', 'f'];
 exports.populate = function(){
 	console.log('Populating adjectif collection...');
 	Adjectif.find().exec(function(err, docs){
-		if(!docs){
+		if(!docs || docs.length === 0){
 			for(var i = 0; i < adjList.length; i++){
 				adjList[i].save();
 			}
-			console.log('Adjetif collection populated');
+			console.log('Adjectif collection populated');
 		}else{
 			console.log('Adjectif collection is not empty');
 		}
