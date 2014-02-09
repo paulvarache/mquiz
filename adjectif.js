@@ -151,7 +151,7 @@ var endings = ['x', 'f'];
 exports.populate = function(){
 	console.log('Populating adjectif collection...');
 	Adjectif.find().exec(function(err, docs){
-		if(docs === null){
+		if(!docs){
 			for(var i = 0; i < adjList.length; i++){
 				adjList[i].save();
 			}
@@ -177,7 +177,7 @@ exports.getName = function(original, gender, callback){
 		if(err){
 			console.log(err)
 		}else{
-			if(doc1 === null){
+			if(!doc1){
 				Adjectif.findOne({random : {$gte : rand}}, function(err, doc2){
 					if(err){
 						console.log(err)
