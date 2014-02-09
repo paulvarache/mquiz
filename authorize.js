@@ -14,7 +14,7 @@ module.exports = function(){
 				res.redirect('/salons');
 			}else if(req.url !== '/' && typeof req.session.user === 'undefined'){
 				res.redirect('/');
-			}else if(req.url === '/'){
+			}else{
 				next();
 			}
 		}

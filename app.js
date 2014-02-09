@@ -1,3 +1,6 @@
+var config = require('konphyg')(__dirname + '/config');
+var mongoConfig = config('mongo');
+
 Array.prototype.shuffle = function(){
 	var i = this.length, shuffle = [];
 	for(;i>0;i--){
@@ -20,6 +23,7 @@ var uuid = require('uuid');
 var game = require('./game');
 var knox = require('knox');
 var authorize = require('./authorize');
+var Adjectif = require('./model').Adjectif;
 
 var app = express();
 
@@ -71,13 +75,14 @@ var httpServer = http.createServer(app).listen(app.get('port'), function(){
 * Connexion a la base de données
 */
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://mquizapp:3103dlccab@ds029979.mongolab.com:29979/heroku_app21788699');
+mongoose.connect('mongodb://'+mongoConfig.username+':'+mongoConfig.password+'@'+mongoConfig.url+':'+mongoConfig.port+'/'+mongoConfig.dbname);
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, "Connection error"));
 db.once('open', function(){
 
 	var model = require('./model');
+	var adjectif = require('./adjectif');
 	var Song = model.Song;
 	var Playlist = model.Playlist;
 
