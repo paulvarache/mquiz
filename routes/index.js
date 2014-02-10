@@ -47,7 +47,7 @@ exports.play = function(req, res){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
-		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray(), navbarInfo : {user : req.session.user}});
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
 	}
 }
 

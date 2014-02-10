@@ -47,7 +47,7 @@
                     {{#songs}}
                     <div style="display:none">
                         <audio id="{{id}}" preload="auto">
-                        <source src="https://s3-eu-west-1.amazonaws.com/mquiz/{{id}}.mp3" type="audio/mpeg">
+                        <source src="https://s3-eu-west-1.amazonaws.com/{{bucket}}/{{id}}.mp3" type="audio/mpeg">
                         </audio>
                     </div>
                     {{/songs}}
