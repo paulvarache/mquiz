@@ -23,6 +23,9 @@ var GameIO = function(salons, users, httpServer){
 				emitNewUsr();
 			}
 		});
+		socket.on('message', function(obj){
+			io.sockets.emit('message', me, obj.message);
+		});
 		socket.on('disconnect', function(){
 			if(!me) return;
 			users[me.id] = me;

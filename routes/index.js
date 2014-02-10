@@ -145,7 +145,7 @@ exports.playlistDelete = function(req, res){
  */
 exports.songs = function(req, res){
 	req.app.locals.Song.findByPlaylistId(req.params.plId, function(err, docs){
-		req.app.locals.Song.find().where({playlists : { $ne : req.params.plId}}).exec(function(err, others){
+		req.app.locals.Song.findNotInPlaylist(req.params.plId, function(err, others){
 			res.render('songs', {songs : others, currentPlaylist : docs, navbarInfo : {user : req.session.user}});
 		});
 	});
@@ -156,16 +156,8 @@ exports.songs = function(req, res){
  */
 exports.songsPost = function(req, res){
 	if(req.xhr){
-		req.app.locals.Song.update(
-			{playlists : req.params.plId},
-			{$pop : {playlists : req.params.plId}},
-			{multi : true},
-			function(err, data){
-				req.app.locals.Song.update(
-					{_id : { '$in' : req.body.idList}},
-					{$push : {playlists : req.params.plId}},
-					{multi : true},
-					function(err, songs){
+		req.app.locals.Song.removePlaylist(req.params.plId, function(err, data){
+				req.app.locals.Song.addPlaylistTo(req.body.idList, req.params.plId, function(err, songs){
 						res.send(200);
 					});
 			});
