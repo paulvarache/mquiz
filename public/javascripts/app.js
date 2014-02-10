@@ -21,8 +21,22 @@ $(document).ready(function(){
 	var mySongList;
 	var currentSong;
 
+	$('#saySomething li').click(function(e){
+		e.preventDefault();
+		$('#saySomethingTab').slideToggle();
+	});
+
+	$('#saySomethingForm').submit(function(e){
+		e.preventDefault();
+		var message = $('#saySomethingMessage');
+		if(message.val() !== ''){
+			socket.emit('message', {message : message.val()});
+			message.val('');
+		}
+	})
+
 	/*
-	* When the ready button is clicked, the server is informed and the user 
+	* When the ready button is clicked, the server is informed and the user
 	* is invited to wait.
 	 */
 	$("#ready-btn").click(function(){
@@ -31,7 +45,7 @@ $(document).ready(function(){
 	});
 
 	/*
-	* When the answer button is clicked, the server is informed and the countdown 
+	* When the answer button is clicked, the server is informed and the countdown
 	* is launched. When the countdown is over the end-response event is emitted.
 	 */
 	$('#response-form').submit(function(e){
@@ -48,7 +62,15 @@ $(document).ready(function(){
 	$('#replay').click(function(){
 		socket.emit('replay');
 		location.reload();
-	})
+	});
+
+	socket.on('message', function(user, message){
+		$('#popover'+user.id).attr('data-content', message);
+		$('#popover'+user.id).popover('show');
+		var nMessage = '<div class="message"><strong>'+user.pseudo+': </strong>'+message+'</div>';
+		$('#messages').append(nMessage);
+		$("#messages").scrollTop($("#messages")[0].scrollHeight);
+	});
 
 	/*
 	* When a new user connects, we add him on the user list.
@@ -67,12 +89,14 @@ $(document).ready(function(){
 	* When a user disconnect, we remove him from the user list.
 	 */
 	socket.on('disusr', function(user_id){
+		$('#popover'+user_id).popover('hide');
 		$('#' + user_id).slideUp(function(){
 			$(this).remove();
 		});
 	});
 
 	$('#remSongs').children().tooltip({trigger : 'manual'});
+	$('.user').popover({trigger : 'manual'});
 
 
 	/*
