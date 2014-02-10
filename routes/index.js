@@ -8,7 +8,9 @@ var hashToArray = function(hash){
 
 var uuid = require('uuid');
 var crypto = require('crypto');
-
+var config = require('konphyg')(__dirname + '/../config');
+var s3Config = config('amazons3');
+var knox = require('knox');
 
 /*
  * GET home page.
@@ -146,7 +148,7 @@ exports.playlistDelete = function(req, res){
  * GET songs
  */
 exports.songs = function(req, res){
-	req.app.locals.Song.find().where({playlists : req.params.plId}).exec(function(err, docs){
+	req.app.locals.Song.findByPlaylistId(req.params.plId, function(err, docs){
 		req.app.locals.Song.find().where({playlists : { $ne : req.params.plId}}).exec(function(err, others){
 			res.render('songs', {songs : others, currentPlaylist : docs});
 		});
@@ -189,11 +191,7 @@ exports.song = function(req, res){
  * POST song.
  */
 exports.songPost = function(req, res){
-	var s3 = req.app.locals.knox.createClient({
-		key : 'AKIAJKY4FPL5LUQUIBNQ',
-		secret: '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',
-		bucket: 'mquiz'
-	});
+	var s3 = knox.createClient(s3Config);
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
