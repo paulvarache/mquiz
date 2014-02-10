@@ -1,5 +1,3 @@
-var config = require('konphyg')(__dirname + '/config');
-var mongoConfig = config('mongo');
 
 /**
  * Module dependencies.
@@ -11,9 +9,7 @@ var http = require('http');
 var path = require('path');
 var uuid = require('uuid');
 var game = require('./game');
-var knox = require('knox');
 var authorize = require('./authorize');
-var Adjectif = require('./model').Adjectif;
 
 var app = express();
 
@@ -39,6 +35,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+//Routes definition
 app.get('/', routes.index);
 app.post('/', routes.indexPost);
 app.get('/logout', routes.logout);
@@ -58,48 +55,31 @@ app.post('/salons', routes.salonsPost);
 app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 
-var adjectif = require('./adjectif');
-adjectif.populate();
+var model = require('./model');
+model.connect(function(){
+	model.populateAdjectifs(function(){
+		app.locals.Song = model.Song;
+		app.locals.Playlist = model.Playlist;
 
-var httpServer = http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+		var salons = {};
+		var users = {};
 
-/*
-* Connexion a la base de données
-*/
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://'+mongoConfig.username+':'+mongoConfig.password+'@'+mongoConfig.url+':'+mongoConfig.port+'/'+mongoConfig.dbname);
-var db = mongoose.connection;
+		app.locals.salons = salons;
+		app.locals.users = users;
+		app.locals.Salon = game.Salon;
 
-db.on('error', console.error.bind(console, "Connection error"));
-db.once('open', function(){
+		app.locals.Playlist.find().exec(function(err, docs){
 
-	var model = require('./model');
-	var Song = model.Song;
-	var Playlist = model.Playlist;
-
-	app.locals.Song = Song;
-	app.locals.Playlist = Playlist;
-
-	var salons = {};
-	var users = {};
-
-	app.locals.salons = salons;
-	app.locals.users = users;
-	app.locals.Salon = game.Salon;
-	app.locals.knox = knox;
-
-	Playlist.find().exec(function(err, docs){
-
-		for(var i=0; i<docs.length; i++){
-			//Salon exemple
-			var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
-			salons[salon.getId()] = salon;
-		}
-
-		var io = require('./gameio');
-		var gameio = new io.GameIO(salons, users, httpServer);
+			for(var i=0; i<docs.length; i++){
+				//Salon exemple
+				var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
+				salons[salon.getId()] = salon;
+			}
+			var io = require('./gameio');
+			var httpServer = http.createServer(app).listen(app.get('port'), function(){
+			  console.log('Express server listening on port ' + app.get('port'));
+			  var gameio = new io.GameIO(salons, users, httpServer);
+			});
+		});
 	});
-
 });
