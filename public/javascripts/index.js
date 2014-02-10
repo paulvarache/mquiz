@@ -68,6 +68,10 @@ $(document).ready(function(){
   				minlength : 4,
   				maxlength : 22
   			}
-  		}
+  		},
+      submitHandler : function(form){
+        $('#login-screen').fadeOut();
+        form.submit();
+      }
   	});
 });

@@ -1,15 +1,3 @@
-var config = require('konphyg')(__dirname + '/config');
-var mongoConfig = config('mongo');
-
-Array.prototype.shuffle = function(){
-	var i = this.length, shuffle = [];
-	for(;i>0;i--){
-		var j = Math.floor(Math.random() * (i - 1));
-		shuffle.push(this[j]);
-		this.splice(j, 1);
-	}
-	return shuffle;
-}
 
 /**
  * Module dependencies.
@@ -21,9 +9,7 @@ var http = require('http');
 var path = require('path');
 var uuid = require('uuid');
 var game = require('./game');
-var knox = require('knox');
 var authorize = require('./authorize');
-var Adjectif = require('./model').Adjectif;
 
 var app = express();
 
@@ -49,8 +35,10 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+//Routes definition
 app.get('/', routes.index);
 app.post('/', routes.indexPost);
+app.get('/logout', routes.logout);
 app.get('/play/user/:uid/salon/:salonid', routes.users);
 app.get('/songlist/:salonid', routes.songlist);
 app.get('/songdetails/:songid', routes.songdetails);
@@ -67,46 +55,31 @@ app.post('/salons', routes.salonsPost);
 app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 
-var httpServer = http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+var model = require('./model');
+model.connect(function(){
+	model.populateAdjectifs(function(){
+		app.locals.Song = model.Song;
+		app.locals.Playlist = model.Playlist;
 
-/*
-* Connexion a la base de données
-*/
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://'+mongoConfig.username+':'+mongoConfig.password+'@'+mongoConfig.url+':'+mongoConfig.port+'/'+mongoConfig.dbname);
-var db = mongoose.connection;
+		var salons = {};
+		var users = {};
 
-db.on('error', console.error.bind(console, "Connection error"));
-db.once('open', function(){
+		app.locals.salons = salons;
+		app.locals.users = users;
+		app.locals.Salon = game.Salon;
 
-	var model = require('./model');
-	var Song = model.Song;
-	var Playlist = model.Playlist;
+		app.locals.Playlist.find().exec(function(err, docs){
 
-	app.locals.Song = Song;
-	app.locals.Playlist = Playlist;
-
-	var salons = {};
-	var users = {};
-
-	app.locals.salons = salons;
-	app.locals.users = users;
-	app.locals.Salon = game.Salon;
-	app.locals.knox = knox;
-
-	Playlist.find().exec(function(err, docs){
-
-		for(var i=0; i<docs.length; i++){
-			//Salon exemple
-			var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
-
-			salons[salon.getId()] = salon;
-		}
-
-		var io = require('./gameio');
-		var gameio = new io.GameIO(salons, users, httpServer);
+			for(var i=0; i<docs.length; i++){
+				//Salon exemple
+				var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
+				salons[salon.getId()] = salon;
+			}
+			var io = require('./gameio');
+			var httpServer = http.createServer(app).listen(app.get('port'), function(){
+			  console.log('Express server listening on port ' + app.get('port'));
+			  var gameio = new io.GameIO(salons, users, httpServer);
+			});
+		});
 	});
-
 });

@@ -10,6 +10,7 @@ var uuid = require('uuid');
 var crypto = require('crypto');
 var config = require('konphyg')(__dirname + '/../config');
 var s3Config = config('amazons3');
+var knox = require('knox');
 
 /*
  * GET home page.
@@ -47,7 +48,7 @@ exports.play = function(req, res){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
-		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray()});
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
 	}
 }
 
@@ -101,7 +102,7 @@ exports.playlists = function(req, res){
 		if(err){
 			console.log(err);
 		}
-		return res.render('playlists', { playlists: docs });
+		return res.render('playlists', { playlists: docs, navbarInfo : {user : req.session.user}});
 	});
 };
 /*
@@ -143,9 +144,9 @@ exports.playlistDelete = function(req, res){
  * GET songs
  */
 exports.songs = function(req, res){
-	req.app.locals.Song.find().where({playlists : req.params.plId}).exec(function(err, docs){
-		req.app.locals.Song.find().where({playlists : { $ne : req.params.plId}}).exec(function(err, others){
-			res.render('songs', {songs : others, currentPlaylist : docs});
+	req.app.locals.Song.findByPlaylistId(req.params.plId, function(err, docs){
+		req.app.locals.Song.findNotInPlaylist(req.params.plId, function(err, others){
+			res.render('songs', {songs : others, currentPlaylist : docs, navbarInfo : {user : req.session.user}});
 		});
 	});
 }
@@ -155,16 +156,8 @@ exports.songs = function(req, res){
  */
 exports.songsPost = function(req, res){
 	if(req.xhr){
-		req.app.locals.Song.update(
-			{playlists : req.params.plId},
-			{$pop : {playlists : req.params.plId}},
-			{multi : true},
-			function(err, data){
-				req.app.locals.Song.update(
-					{_id : { '$in' : req.body.idList}},
-					{$push : {playlists : req.params.plId}},
-					{multi : true},
-					function(err, songs){
+		req.app.locals.Song.removePlaylist(req.params.plId, function(err, data){
+				req.app.locals.Song.addPlaylistTo(req.body.idList, req.params.plId, function(err, songs){
 						res.send(200);
 					});
 			});
@@ -178,7 +171,7 @@ exports.songsPost = function(req, res){
  */
 exports.song = function(req, res){
 	req.app.locals.Song.find().exec(function(err, docs){
-		res.render('song', {songs : docs});
+		res.render('song', {songs : docs, navbarInfo : {user : req.session.user}});
 	});
 }
 
@@ -186,7 +179,7 @@ exports.song = function(req, res){
  * POST song.
  */
 exports.songPost = function(req, res){
-	var s3 = req.app.locals.knox.createClient(s3Config);
+	var s3 = knox.createClient(s3Config);
 	var song = req.app.locals.Song({
 		title : req.body.title,
 		artist : req.body.artist,
@@ -216,7 +209,7 @@ exports.salons = function(req, res){
 		}
 	}
 	req.app.locals.Playlist.find().exec(function(err, playlists){
-		res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
+		res.render('salons', {playlists : playlists, salons : s, customSalons : cs, navbarInfo : {user : req.session.user}});
 	});
 }
 
@@ -234,4 +227,9 @@ exports.checkPasswd = function(req, res){
 	};
 	response.access = salon.checkPasswd(req.params.password) ? 'granted' : 'refused';
 	res.json(response);
+}
+
+exports.logout = function(req, res){
+	delete req.session.user;
+	res.redirect('/');
 }
