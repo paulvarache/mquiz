@@ -21,8 +21,8 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		.where({playlists : songlistId})
 		.exec(function(err, songs){
 			songlist = songs;
-			songlist = songlist.slice(0, songlistLength);
 			parent.shuffleSonglist();
+			songlist = songlist.slice(0, songlistLength);
 		});
 	var interval = null;
 
@@ -32,8 +32,8 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		.where({playlists : songlistId})
 		.exec(function(err, songs){
 			songlist = songs;
-			songlist = songlist.slice(0, songlistLength);
 			parent.shuffleSonglist();
+			songlist = songlist.slice(0, songlistLength);
 		});
 		status = 'waiting-users';
 	}
