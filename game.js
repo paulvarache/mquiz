@@ -16,21 +16,24 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 	var password = password || '';
 	var songlistLength = songlistLength;
 	var songlist = [];
+	var parent = this;
 	Song.find()
 		.where({playlists : songlistId})
 		.exec(function(err, songs){
-			songlist = songs.shuffle();
+			songlist = songs;
 			songlist = songlist.slice(0, songlistLength);
+			parent.shuffleSonglist();
 		});
-
 	var interval = null;
 
 	this.reinit = function(){
 		currentSong = 0;
 		Song.find()
 		.where({playlists : songlistId})
-		.limit(songlistLength).exec(function(err, songs){
-			songlist = songs.shuffle();
+		.exec(function(err, songs){
+			songlist = songs;
+			songlist = songlist.slice(0, songlistLength);
+			parent.shuffleSonglist();
 		});
 		status = 'waiting-users';
 	}
@@ -139,9 +142,10 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		return success >= (max - l.distance) ? false : true;
 	}
 	this.isLastSong = function(){
-		return currentSong === songlist.length - 1;
+		return currentSong === (songlistLength - 1);
 	}
 	this.nextSong = function(){
+		console.log("CurrentSongIndex: "+currentSong+" / NextOne: ");
 		currentSong++;
 	}
 	this.getCurrentSongPosition = function(){
@@ -159,6 +163,15 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 			result.push(hash[k]);
 		}
 		return result;
+	}
+	this.shuffleSonglist = function(){
+		var i = songlist.length, shuffle = [];
+		for(;i>0;i--){
+			var j = Math.floor(Math.random() * (i - 1));
+			shuffle.push(songlist[j]);
+			songlist.splice(j, 1);
+		}
+		songlist = shuffle;
 	}
 };
 

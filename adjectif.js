@@ -32,7 +32,7 @@ adjList.push(new Adjectif({base : "Convivial", feminin : "e", random : Math.rand
 adjList.push(new Adjectif({base : "Coquet", feminin : "te", random : Math.random() }));
 adjList.push(new Adjectif({base : "Correct", feminin : "e", random : Math.random() }));
 adjList.push(new Adjectif({base : "Crédible", feminin : "", random : Math.random() }));
-adjList.push(new Adjectif({base : "Croquante", feminin : "", random : Math.random() }));
+adjList.push(new Adjectif({base : "Croquant", feminin : "e", random : Math.random() }));
 adjList.push(new Adjectif({base : "Cynique", feminin : "", random : Math.random() }));
 adjList.push(new Adjectif({base : "Dégueulasse", feminin : "", random : Math.random() }));
 adjList.push(new Adjectif({base : "Délectable", feminin : "", random : Math.random() }));

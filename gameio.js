@@ -1,10 +1,6 @@
 var GameIO = function(salons, users, httpServer){
 	//Getting io object
 	var io = require('socket.io').listen(httpServer);
-	io.configure(function () { 
-		io.set("transports", ["xhr-polling"]); 
-		io.set("polling duration", 10); 
-	});
 
 	io.sockets.on('connection', function(socket){
 		var me, salon;
