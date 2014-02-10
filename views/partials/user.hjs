@@ -1,4 +1,4 @@
 <li id="{{user.id}}" >
-	<a href="#" class="thumbnail avatar">{{{user.avatar}}}</a>
+	<a href="#" id="popover{{user.id}}" class="thumbnail user avatar" data-container="body" data-toggle="popover" data-placement="right" data-content="">{{{user.avatar}}}</a>
 	<p>{{user.pseudo}}</p>
 </li>

@@ -59,6 +59,20 @@
             <ul class="list-group" id="last-songs"></ul>
         </div>
     </div>
+    <div class='saySomething' id='saySomething'>
+        <ul class="nav nav-tabs">
+            <li class='active'><a href="#">Dire quelque chose...</a></li>
+        </ul>
+        <div class="tab-content" id='saySomethingTab'  style="display: none">
+            <div class='tab-pane active'>
+                <div class='messages' id='messages'></div>
+                <form id='saySomethingForm' class='form-inline' action="#" role="form">
+                    <input type="text" class="form-control" id='saySomethingMessage' placeholder="Message">
+                    <input type='submit' class="btn btn-warning" value="Envoyer" />
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {{#yield-javascripts}}
     <script type='text/javascript'>
