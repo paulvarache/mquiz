@@ -1,4 +1,4 @@
-<div class='app'>
+<div class='app' id='app' style='display: none'>
     <div id="score-plus" class='text-success score-plus' style="display: none">+1</div>
     <div class="row">
         <div class="col-md-2">

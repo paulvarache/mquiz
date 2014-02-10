@@ -47,7 +47,7 @@ exports.play = function(req, res){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
-		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray()});
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray(), navbarInfo : {user : req.session.user}});
 	}
 }
 
@@ -101,7 +101,7 @@ exports.playlists = function(req, res){
 		if(err){
 			console.log(err);
 		}
-		return res.render('playlists', { playlists: docs });
+		return res.render('playlists', { playlists: docs, navbarInfo : {user : req.session.user}});
 	});
 };
 /*
@@ -145,7 +145,7 @@ exports.playlistDelete = function(req, res){
 exports.songs = function(req, res){
 	req.app.locals.Song.find().where({playlists : req.params.plId}).exec(function(err, docs){
 		req.app.locals.Song.find().where({playlists : { $ne : req.params.plId}}).exec(function(err, others){
-			res.render('songs', {songs : others, currentPlaylist : docs});
+			res.render('songs', {songs : others, currentPlaylist : docs, navbarInfo : {user : req.session.user}});
 		});
 	});
 }
@@ -178,7 +178,7 @@ exports.songsPost = function(req, res){
  */
 exports.song = function(req, res){
 	req.app.locals.Song.find().exec(function(err, docs){
-		res.render('song', {songs : docs});
+		res.render('song', {songs : docs, navbarInfo : {user : req.session.user}});
 	});
 }
 
@@ -216,7 +216,7 @@ exports.salons = function(req, res){
 		}
 	}
 	req.app.locals.Playlist.find().exec(function(err, playlists){
-		res.render('salons', {playlists : playlists, salons : s, customSalons : cs});
+		res.render('salons', {playlists : playlists, salons : s, customSalons : cs, navbarInfo : {user : req.session.user}});
 	});
 }
 
@@ -234,4 +234,9 @@ exports.checkPasswd = function(req, res){
 	};
 	response.access = salon.checkPasswd(req.params.password) ? 'granted' : 'refused';
 	res.json(response);
+}
+
+exports.logout = function(req, res){
+	delete req.session.user;
+	res.redirect('/');
 }

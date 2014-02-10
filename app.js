@@ -1,16 +1,6 @@
 var config = require('konphyg')(__dirname + '/config');
 var mongoConfig = config('mongo');
 
-Array.prototype.shuffle = function(){
-	var i = this.length, shuffle = [];
-	for(;i>0;i--){
-		var j = Math.floor(Math.random() * (i - 1));
-		shuffle.push(this[j]);
-		this.splice(j, 1);
-	}
-	return shuffle;
-}
-
 /**
  * Module dependencies.
  */
@@ -51,6 +41,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.post('/', routes.indexPost);
+app.get('/logout', routes.logout);
 app.get('/play/user/:uid/salon/:salonid', routes.users);
 app.get('/songlist/:salonid', routes.songlist);
 app.get('/songdetails/:songid', routes.songdetails);
@@ -104,7 +95,6 @@ db.once('open', function(){
 		for(var i=0; i<docs.length; i++){
 			//Salon exemple
 			var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
-
 			salons[salon.getId()] = salon;
 		}
 

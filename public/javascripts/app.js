@@ -11,6 +11,8 @@ $(document).ready(function(){
 
 	resetScorePlusPosition();
 
+	$('#app').fadeIn();
+
 	/*
 	* Connection to the io server
 	 */
