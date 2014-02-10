@@ -102,7 +102,10 @@ exports.playlists = function(req, res){
 		if(err){
 			console.log(err);
 		}
-		return res.render('playlists', { playlists: docs, navbarInfo : {user : req.session.user}});
+		return res.render('playlists', {
+			playlists: docs,
+			admin : true,
+			navbarInfo : {user : req.session.user}});
 	});
 };
 /*
@@ -119,7 +122,7 @@ exports.playlistsPost = function(req, res){
 			return res.render('partials/playlist', doc);
 		});
 	}else{
-		res.redirect("playlists");
+		res.redirect("/admin/playlists");
 	}
 };
 
@@ -136,7 +139,7 @@ exports.playlistDelete = function(req, res){
 			res.send(200);
 		});
 	}else{
-		res.redirect("playlists");
+		res.redirect("/admin/playlists");
 	}
 }
 
@@ -144,10 +147,23 @@ exports.playlistDelete = function(req, res){
  * GET songs
  */
 exports.songs = function(req, res){
-	req.app.locals.Song.findByPlaylistId(req.params.plId, function(err, docs){
-		req.app.locals.Song.findNotInPlaylist(req.params.plId, function(err, others){
-			res.render('songs', {songs : others, currentPlaylist : docs, navbarInfo : {user : req.session.user}});
-		});
+	req.app.locals.Playlist.findOne({_id: req.params.plId}, function(err, playlist){
+		if(err){
+			console.log(err);
+			res.redirect('/admin/playlists');
+		}else{
+			req.app.locals.Song.findByPlaylistId(playlist.id, function(err, docs){
+				req.app.locals.Song.findNotInPlaylist(playlist.id, function(err, others){
+					res.render('songs', {
+						songs : others,
+						currentPlaylist : docs,
+						playlist : playlist,
+						admin : true,
+						navbarInfo : {user : req.session.user}
+					});
+				});
+			});
+		}
 	});
 }
 
@@ -162,7 +178,7 @@ exports.songsPost = function(req, res){
 					});
 			});
 	}else{
-		res.redirect('playlists');
+		res.redirect('/admin/playlists');
 	}
 }
 
@@ -171,7 +187,10 @@ exports.songsPost = function(req, res){
  */
 exports.song = function(req, res){
 	req.app.locals.Song.find().exec(function(err, docs){
-		res.render('song', {songs : docs, navbarInfo : {user : req.session.user}});
+		res.render('song', {
+			songs : docs,
+			admin: true,
+			navbarInfo : {user : req.session.user}});
 	});
 }
 
@@ -192,7 +211,7 @@ exports.songPost = function(req, res){
 			'x-amz-acl': 'public-read'
 		};
 		s3.putFile(song.path, doc.id + '.mp3', s3Headers, function(err, response){
-			res.redirect('/song');
+			res.redirect('/admin/song');
 		});
 	});
 }
@@ -209,7 +228,7 @@ exports.salons = function(req, res){
 		}
 	}
 	req.app.locals.Playlist.find().exec(function(err, playlists){
-		res.render('salons', {playlists : playlists, salons : s, customSalons : cs, navbarInfo : {user : req.session.user}});
+		res.render('salons', {playlists : playlists, salons : s, customSalons : cs, users : hashToArray(req.app.locals.users), navbarInfo : {user : req.session.user}});
 	});
 }
 
@@ -232,4 +251,28 @@ exports.checkPasswd = function(req, res){
 exports.logout = function(req, res){
 	delete req.session.user;
 	res.redirect('/');
+}
+
+exports.adminLogin = function(req, res){
+	res.render('adminLogin', {navbarInfo : {user : req.session.user}});
+}
+
+exports.adminLoginPost = function(req, res){
+	var credentials = config('credentials');
+	var username = req.body.login;
+	var password = req.body.password;
+	var hash = crypto.createHash('md5').update(password).digest('hex');
+	var adminUser = credentials[username];
+	if(typeof adminUser !== 'undefined'){
+		console.log(hash);
+		console.log(adminUser.passwordHash);
+		if(adminUser.passwordHash === hash){
+			req.session.admin = true;
+			res.redirect('/admin/playlists');
+		}else{
+			res.render('adminLogin', {error : "Accès refusé: Mauvais mot de passe", username: username, navbarInfo : {user : req.session.user}} )
+		}
+	}else{
+		res.render('adminLogin', {error : "Accès refusé: Mauvais identifiant", navbarInfo : {user : req.session.user}} )
+	}
 }

@@ -18,9 +18,15 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand">MQuiz</a>
+                    <a href="/" class="navbar-brand">MQuiz</a>
                 </div>
                 <div class="collapse navbar-collapse" id="mquiz-navbar">
+                {{#admin}}
+                    <ul class="nav navbar-nav">
+                        <li><a href="/admin/playlists">Playlists</a></li>
+                        <li><a href="/admin/song">Musiques</a></li>
+                    </ul>
+                {{/admin}}
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#">{{{user.avatar}}}</a></li>
                         <li class="dropdown">

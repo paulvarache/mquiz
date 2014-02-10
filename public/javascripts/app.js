@@ -67,6 +67,9 @@ $(document).ready(function(){
 	socket.on('message', function(user, message){
 		$('#popover'+user.id).attr('data-content', message);
 		$('#popover'+user.id).popover('show');
+		setTimeout(function(){
+			$('#popover'+user.id).popover('hide');
+		}, 2000);
 		var nMessage = '<div class="message"><strong>'+user.pseudo+': </strong>'+message+'</div>';
 		$('#messages').append(nMessage);
 		$("#messages").scrollTop($("#messages")[0].scrollHeight);
