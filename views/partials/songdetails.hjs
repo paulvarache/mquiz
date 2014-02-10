@@ -1,4 +1,4 @@
-<li class="list-group-item">
+<li class="list-group-item songDetails">
     <img class="thumbnail cover" id="cover" src="{{song.cover}}" />
     <h5>{{song.title}}</h5>
     <h6>{{song.artist}}</h6>

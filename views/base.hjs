@@ -9,23 +9,32 @@
         <link rel="stylesheet" href="/stylesheets/mquiz.css" />
     </head>
     <body>
-        <!--<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="mquiz-navbar">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand">MQuiz</a>
+        {{#navbarInfo}}
+        <nav class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="mquiz-navbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand">MQuiz</a>
+                </div>
+                <div class="collapse navbar-collapse" id="mquiz-navbar">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">{{{user.avatar}}}</a></li>
+                        <li class="dropdown">
+                            <a href="#" class='dropdown-toggle' data-toggle='dropdown'>{{user.pseudo}}<b class='caret'></b></a>
+                            <ul class="dropdown-menu">
+                                <li class="divider"></li>
+                                <li><a href="/logout">Déconnexion</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="collapse navbar-collapse" id="mquiz-navbar">
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Jeu</a></li>
-                    <li><a href="/playlists">Playlists</a></li>
-                    <li><a href="/song">Musiques</a></li>
-                </ul>
-            </div>
-        </nav>-->
+        </nav>
+        {{/navbarInfo}}
 		{{{ yield }}}
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script type="text/javascript" src="/javascripts/jquery.validate.js"></script>
