@@ -112,3 +112,23 @@ row{
 	margin-right: auto;
 	margin-left: auto;
 }
+.saySomething{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+.saySomething a:hover{
+	cursor: pointer !important;
+}
+.tab-content{
+	background: white;
+	padding: 10px;
+}
+.message{
+	display: block;
+}
+.messages{
+	max-height: 30vh;
+	overflow-y: auto;
+	margin-bottom: 5px;
+}

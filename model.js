@@ -18,10 +18,16 @@ var connect = function(callback){
 
 var Schema = mongoose.Schema;
 
+/*
+ * Playlists
+ */
 var playlistSchema = new Schema({
 	name : String,
 	difficulty : Number
 });
+/*
+ * Songs
+ */
 var songSchema = new Schema({
 	title : String,
 	cover : String,
@@ -31,6 +37,28 @@ var songSchema = new Schema({
 songSchema.statics.findByPlaylistId = function(plId, callback){
 	return this.find({playlists : plId}, callback);
 }
+songSchema.statics.findNotInPlaylist = function(plId, callback){
+	return this.find({playlists : { $ne : plId}}, callback);
+}
+songSchema.statics.removePlaylist = function(plId, callback){
+	return this.update(
+				{playlists : plId},
+				{$pop : {playlists : plId}},
+				{multi : true},
+				callback
+			);
+}
+songSchema.statics.addPlaylistTo = function(songArray, plId, callback){
+	return this.update(
+				{_id : { '$in' : songArray}},
+				{$push : {playlists : plId}},
+				{multi : true},
+				callback
+			);
+}
+/*
+ * Adjectifs
+ */
 var adjectifSchema = new Schema({
 	base : String,
 	feminin : String,
@@ -47,7 +75,7 @@ var populateAdjectifs = function(callback){
 			console.log(err);
 		}else{
 			if(count === 0){
-				var adjlist = require('./adjectifs.json').adjectifs;
+				var adjlist = require('./data/adjectifs.json').adjectifs;
 				for(var i = 0; i < adjlist.length; i++){
 					var adj = new Adjectif(adjlist[i]);
 					console.log(adj);
