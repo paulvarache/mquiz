@@ -7,3 +7,4 @@ public/cover/*
 data/*
 node_modules/*
 tmp/*
+config/*
