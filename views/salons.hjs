@@ -25,7 +25,7 @@
 					<h3 class="panel-title">Salons publics</h3>
 				</div>
 				<div class="panel-body">
-					Jouez avec des étrangers, partout dans le monde.
+					Jouez avec des inconnus.
 				</div>
 				<ul class="list-group">
 					{{#salons}}
