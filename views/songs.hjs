@@ -1,4 +1,4 @@
-<h2>Modifier une playlist</h2>
+<h2>{{playlist.name}}</h2>
 <div class="row">
 	<div class="col-md-12" style="text-align: center">
 		<div id='error'></div>

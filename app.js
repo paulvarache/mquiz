@@ -43,17 +43,19 @@ app.get('/play/user/:uid/salon/:salonid', routes.users);
 app.get('/songlist/:salonid', routes.songlist);
 app.get('/songdetails/:songid', routes.songdetails);
 app.get('/scores/:salonid', routes.scores);
-app.get('/playlists', routes.playlists);
-app.post('/playlists', routes.playlistsPost);
-app.get('/playlist/delete/:plId', routes.playlistDelete);
-app.get('/songs/:plId', routes.songs);
-app.post('/songs/:plId', routes.songsPost);
-app.get('/song', routes.song);
-app.post('/song', routes.songPost);
+app.get('/admin/playlists', routes.playlists);
+app.post('/admin/playlists', routes.playlistsPost);
+app.get('/admin/playlist/delete/:plId', routes.playlistDelete);
+app.get('/admin/songs/:plId', routes.songs);
+app.post('/admin/songs/:plId', routes.songsPost);
+app.get('/admin/song', routes.song);
+app.post('/admin/song', routes.songPost);
 app.get('/salons', routes.salons);
 app.post('/salons', routes.salonsPost);
 app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
+app.get('/adminLogin', routes.adminLogin);
+app.post('/adminLogin', routes.adminLoginPost);
 
 var model = require('./model');
 model.connect(function(){

@@ -1,71 +1,86 @@
 <div class="container">
-	<h3>Salons ouverts</h3>
-	<ul class="list-group">
-		{{#salons}}
-		<li class="list-group-item">
-			{{#isFull}}
-				{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-			{{/isFull}}
-			{{^isFull}}
-				<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-			{{/isFull}}
-		</li>
-		{{/salons}}
-	</ul>
-	<h3>Entre amis</h3>
-	<ul class="list-group">
-		{{#customSalons}}
-		<li class="list-group-item">
-			{{^isFull}}
-				{{#needPassword}}
-				<a href='#' class='passwd-link' id="{{getId}}">{{getName}}</a> *<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-				<div class="row-fluid" id="form-{{getId}}" style="display: none">
-					<label for='name' class='inline-label'>Mot de passe</label>
-					<input type="password" class="form-control inline-form-control inline-input" id="passwd-{{getId}}" placeholder="Mot de passe" />
-					<button type="button" id='{{getId}}' class="btn btn-default connect inline-form-control">Go !</button>
+	<div class='row-fluid'>
+		<div class='col-md-3'>
+		<h3>Utilisateurs connectés</h3>
+			<ul class="list-group">
+				{{#users}}
+				<li class="list-group-item">
+					<div class="thumbnail avatar">{{{avatar}}}</div>
+					{{pseudo}}
+				</li>
+				{{/users}}
+			</ul>
+		</div>
+		<div class="col-md-9">
+			<h3>Salons ouverts</h3>
+			<ul class="list-group">
+				{{#salons}}
+				<li class="list-group-item">
+					{{#isFull}}
+					{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+					{{/isFull}}
+					{{^isFull}}
+					<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+					{{/isFull}}
+				</li>
+				{{/salons}}
+			</ul>
+			<h3>Entre amis</h3>
+			<ul class="list-group">
+				{{#customSalons}}
+				<li class="list-group-item">
+					{{^isFull}}
+					{{#needPassword}}
+					<a href='#' class='passwd-link' id="{{getId}}">{{getName}}</a> *<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+					<div class="row-fluid" id="form-{{getId}}" style="display: none">
+						<label for='name' class='inline-label'>Mot de passe</label>
+						<input type="password" class="form-control inline-form-control inline-input" id="passwd-{{getId}}" placeholder="Mot de passe" />
+						<button type="button" id='{{getId}}' class="btn btn-default connect inline-form-control">Go !</button>
+					</div>
+					{{/needPassword}}
+					{{^needPassword}}
+					<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+					{{/needPassword}}
+					{{/isFull}}
+					{{#isFull}}
+					{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
+					{{/isFull}}
+				</li>
+				{{/customSalons}}
+				{{^customSalons}}
+				<h5>Aucun salon</h5>
+				{{/customSalons}}
+			</ul>
+			<button type="button" class="btn btn-default" id="add-salon">Nouveau salon</button>
+			<form action="/salons" method="POST" role="form" id="salonForm" style="display : none">
+				<div class="form-group">
+					<label for='name'>Nom du salon</label>
+					<input type="text" class="form-control" id="name" name="name" placeholder="Nom" />
 				</div>
-				{{/needPassword}}
-				{{^needPassword}}
-				<a href='/play/{{getId}}'>{{getName}}</a><div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-				{{/needPassword}}
-			{{/isFull}}
-			{{#isFull}}
-				{{getName}}<div class="pull-right">{{getConnectedUsers}}/{{getMaxUsers}}</div>
-			{{/isFull}}
-		</li>
-		{{/customSalons}}
-		{{^customSalons}}
-			<h5>Aucun salon</h5>
-		{{/customSalons}}
-	</ul>
-	<button type="button" class="btn btn-default" id="add-salon">Nouveau salon</button>
-	<form action="/salons" method="POST" role="form" id="salonForm" style="display : none">
-		<div class="form-group">
-			<label for='name'>Nom du salon</label>
-			<input type="text" class="form-control" id="name" name="name" placeholder="Nom" />
+				<div class="form-group">
+					<label for="playlist">Choix de la playlist</label>
+					<select name="playlist" id="playlist" class="form-control required" size="5" >
+						{{#playlists}}
+						<option value="{{id}}">{{name}}</option>
+						{{/playlists}}
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="players">Nombre de joueur</label>
+					<input type="number" id='players' name="players" class="form-control" value="2" />
+				</div>
+				<div class="form-group">
+					<label for="songlistLength">Nombre de musique</label>
+					<input type="number" id='songlistLength' name="songlistLength" class="form-control" value="5"/>
+				</div>
+				<div class="form-group">
+					<label for="password">Mot de passe (optionel)</label>
+					<input type="text" id='password' name="password" class="form-control" />
+				</div>
+				<button type="submit" class="btn btn-primary">Créer</button>
+			</form>
 		</div>
-		<div class="form-group">
-			<label for="playlist">Choix de la playlist</label>
-			<select name="playlist" id="playlist" class="form-control required" size="5" >
-				{{#playlists}}
-				<option value="{{id}}">{{name}}</option>
-				{{/playlists}}
-			</select>
-		</div>
-		<div class="form-group">
-			<label for="players">Nombre de joueur</label>
-			<input type="number" id='players' name="players" class="form-control" value="2" />
-		</div>
-		<div class="form-group">
-			<label for="songlistLength">Nombre de musique</label>
-			<input type="number" id='songlistLength' name="songlistLength" class="form-control" value="5"/>
-		</div>
-		<div class="form-group">
-			<label for="password">Mot de passe (optionel)</label>
-			<input type="text" id='password' name="password" class="form-control" />
-		</div>
-		<button type="submit" class="btn btn-primary">Créer</button>
-	</form>
+	</div>
 </div>
 {{#yield-javascripts}}
 <script type="text/javascript" src="/javascripts/salons.js"></script>
