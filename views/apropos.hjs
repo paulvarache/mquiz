@@ -1,0 +1,12 @@
+<div class='container'>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h2 class="panel-title">À propos</h2>
+		</div>
+		<div class="panel-body">
+			<img src='http://www.gravatar.com/avatar/9b9920e5798bfd8a9271224b7840b2a9' class="rounded"></img>
+			<p>Site créé par Paul Varache toujours en cours de développement.<br/>
+		    Sources disponibles sur <a href="https://github.com/paulvarache/mquiz">GitHub</a></p>
+		</div>
+	</div>
+</div>

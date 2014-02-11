@@ -1,7 +1,10 @@
 $(document).ready(function(){
-	$('#add-salon').click(function(){
-		$(this).slideUp();
-		$('#salonForm').slideToggle();
+	$('#add-salon').click(function(e){
+		e.preventDefault();
+		$('#salonPanel').slideToggle();
+		$('html, body').animate({
+			scrollTop : $('#salonPanel').offset().top
+		}, 1000);
 	});
 	$('#salonForm').validate({
 		rules : {

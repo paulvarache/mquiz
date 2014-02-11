@@ -56,6 +56,7 @@ app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 app.get('/adminLogin', routes.adminLogin);
 app.post('/adminLogin', routes.adminLoginPost);
+app.get('/apropos', routes.apropos);
 
 var model = require('./model');
 model.connect(function(){
