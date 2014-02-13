@@ -17,13 +17,18 @@
 </div>
 <br/>
 <div class="row-fluid">
+	<audio id="previewPlayer">
+        <source src="" type="audio/mpeg">
+    </audio>
 	<div class="col-md-12">
 		<div class="playlist" id="playlist">
 			{{#songs}}
-			<div draggable="true" class="list-group-item song songInfo" id="{{id}}">
-				<img src="{{cover}}" width="40px"/>
+			<div draggable="true" class="list-group-item song songInfo" id="{{id}}" style="background: url('{{cover}}');">
+			<div class='playButton'></div>
+			<div class='songInfoText'>
 				<h5>{{title}}</h5>
 				<h6>{{artist}}</h6>
+			</div>
 			</div>
 			{{/songs}}
 			{{^songs}}

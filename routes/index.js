@@ -17,6 +17,7 @@ var knox = require('knox');
 var mm = require('musicmetadata');
 var fs = require('fs');
 var restify = require('restify');
+var async = require('async');
 
 /*
  * GET home page.
@@ -54,7 +55,7 @@ exports.play = function(req, res){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
-		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglist(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
 	}
 }
 
@@ -225,37 +226,50 @@ exports.songPost = function(req, res){
 exports.addMultipleSong = function(req, res){
 	var s3 = knox.createClient(s3Config);
 	songs = req.body.songs;
-	for(var i = 0; i < songs.length; i++){
-		var song = req.app.locals.Song({
-			title : songs[i].title,
-			artist : songs[i].artist,
-			cover : songs[i].cover
+	async.each(songs, function(item, callback){
+		var path = tmpFiles[item.id];
+		var parser = mm(fs.createReadStream(path), {duration: true});
+		parser.on('done', function(){
+			console.log('done');
 		});
-		var path = tmpFiles[songs[i].id];
-		delete tmpFiles[songs[i].id];
-		song.save(function(err, doc){
-			var s3Headers = {
-				'Content-Type': 'audio/mpeg',
-				'x-amz-acl': 'public-read'
-			};
-			s3.putFile(path, doc.id + '.mp3', s3Headers, function(err, response){
-				fs.unlinkSync(path);
+		parser.on('metadata', function(tags){
+			console.log('metadata');
+			var song = req.app.locals.Song({
+				title : item.title,
+				artist : item.artist,
+				cover : item.cover,
+				duration : tags.duration
+			});
+			delete tmpFiles[item.id];
+			song.save(function(err, doc){
+				var s3Headers = {
+					'Content-Type': 'audio/mpeg',
+					'x-amz-acl': 'public-read'
+				};
+				console.log(doc.id);
+				s3.putFile(path, doc.id + '.mp3', s3Headers, function(err, response){
+					console.log('One file transfered');
+					callback();
+					//fs.unlinkSync(path);
+				});
 			});
 		});
-	}
+	},
+	function(){
+		console.log('Transfert all completed')
+	});
 	res.send(200);
 }
 
 exports.songUpload = function(req, res){
 	if(req.files.songs.type === 'audio/mp3'){
 		var fId = uuid.v1();
-		console.log(fId);
 		tmpFiles[fId] = req.files.songs.path;
-		console.log(tmpFiles);
-		var parser = mm(fs.createReadStream(req.files.songs.path));
+		var parser = mm(fs.createReadStream(req.files.songs.path), {duration: true});
 		var tags = null;
 		parser.on('metadata', function(metadata){
 			tags = metadata;
+			console.log(tags);
 		});
 		parser.on('done', function(err){
 			if(tags !== null){
