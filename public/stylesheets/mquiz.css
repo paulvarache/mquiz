@@ -47,7 +47,7 @@ body {
 .cover{
 	width: 100px;
 }
-.panel, #remSongs{
+.app .panel, #remSongs{
 	text-align: center;
 	background-color: transparent;
 }
@@ -131,4 +131,10 @@ row{
 	max-height: 30vh;
 	overflow-y: auto;
 	margin-bottom: 5px;
+}
+.uploadDetails img, .uploadDetails div{
+	display: inline-block;
+}
+.panel-title-with-btn{
+	display: inline-block;
 }

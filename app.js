@@ -57,6 +57,8 @@ app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 app.get('/adminLogin', routes.adminLogin);
 app.post('/adminLogin', routes.adminLoginPost);
 app.post('/admin/songUpload', routes.songUpload);
+app.get('/admin/deleteTmpFile/:fId', routes.deleteTmpFile);
+app.post('/admin/addMultipleSong', routes.addMultipleSong);
 
 var model = require('./model');
 model.connect(function(){
