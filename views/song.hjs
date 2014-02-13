@@ -1,18 +1,19 @@
 <div class="container-fluid">
-<h2>Liste des musiques</h2>
-<a href="#" id="song-add" class="btn btn-default pull-right">Ajouter une musique</a>
+	<h2>Liste des musiques</h2>
+	<a href="#" id="song-add" class="btn btn-default pull-right">Ajouter une musique</a>
 </div>
 <div class="container" style="display: none" id="song-add-form">
 	<div class="col-md-9">
-		<form action="/song" method="POST" role="form" enctype="multipart/form-data" id='form'>
+		<div class="form-group" id="songGroup">
+			<label for="song">Fichier audio</label>
+			<input type="file" class="form-control" id="song" name="songs" data-url="/admin/songUpload" multiple>
+		</div>
+			<ul class='list-group' id='songList'></ul>
+		<button type="button" id="next" class="btn btn-primary">Suivant</button>
+		<form action="/song" method="POST" role="form" enctype="multipart/form-data" id='form' style="display: none">
 			<legend>Ajouter une musique</legend>
 
-			<div class="form-group" style="display: none" id="songGroup">
-				<label for="song">Fichier audio</label>
-				<input type="file" class="form-control" id="song" name="song">
-			</div>
-
-			<div class="form-group" style="display : none" id="titleGroup">
+			<div class="form-group" id="titleGroup">
 				<label for="customTitle">Titre</label>
 				<input class="form-control" type="text" id="customTitle" name="customTitle" /><br/>
 				<select size="10" class="form-control" id="title"></select>
@@ -52,5 +53,7 @@
 </div>
 
 {{#yield-javascripts}}
-	<script type="text/javascript" src="/javascripts/song.js"></script>
+<script type="text/javascript" src="/javascripts/song.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.fileupload.js"></script>
 {{/yield-javascripts}}

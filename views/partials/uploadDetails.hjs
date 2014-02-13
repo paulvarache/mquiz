@@ -1,0 +1,4 @@
+{{#song}}
+<img src='{{cover}}' />
+<h4>{{artist}} - {{title}}</h4>
+{{/song}}
