@@ -2,7 +2,7 @@ $(document).ready(function(){
 	var reqEnd = '&api_key=5216edf37ad15286cfb41070bd484906&format=json';
 	var tracks;
 	var artist;
-	var step = 'artist';
+	var step = 'song';
 
 
 	$('#title').focus(function(){
@@ -26,7 +26,7 @@ $(document).ready(function(){
 
 	});
 
-	$('#form').submit(function(e){
+	/*$('#form').submit(function(e){
 		var parts = $('#song').val().split('.');
 		if(parts[parts.length - 1] !== 'mp3'){
 			e.preventDefault();
@@ -35,9 +35,22 @@ $(document).ready(function(){
 			$(this).fadeOut();
 			$(this).parent().append('<h4>Envoi en cours...</h4>');
 		}
+	});*/
+	var processHandling = function(data){
+		console.log(data);
+	};
+	var uploadSuccess = function(){
+		console.log('success');
+	}
+	$('#song').fileupload({
+		dataType: 'html',
+		done: function(e, data){
+			console.log(data.result);
+			$('#songList').append($(data.result));
+		}
 	});
 	$('#next').click(function(){
-		if(step === 'artist'){
+		/*if(step === 'artist'){
 			getTracks();
 		}else if(step === 'title'){
 			var info
@@ -59,7 +72,7 @@ $(document).ready(function(){
 			$(this).html('Ajouter');
 			$(this).attr('type', 'submit');
 			step = '';
-		}
+		}*/
 	});
 	$('#artist').keyup(function(){
 		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+$(this).val()+reqEnd, function(data){

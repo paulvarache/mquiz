@@ -10,7 +10,11 @@ var uuid = require('uuid');
 var crypto = require('crypto');
 var config = require('konphyg')(__dirname + '/../config');
 var s3Config = config('amazons3');
+var lastfmConfig = config('lastfm');
 var knox = require('knox');
+var mm = require('musicmetadata');
+var fs = require('fs');
+var restify = require('restify');
 
 /*
  * GET home page.
@@ -213,6 +217,30 @@ exports.songPost = function(req, res){
 		s3.putFile(song.path, doc.id + '.mp3', s3Headers, function(err, response){
 			res.redirect('/admin/song');
 		});
+	});
+}
+
+exports.songUpload = function(req, res){
+	var parser = mm(fs.createReadStream(req.files.songs.path));
+	parser.on('metadata', function(tags){
+		var client = restify.createJsonClient({
+			url: lastfmConfig.url
+		});
+		client.get(
+			'/2.0/?method=track.getinfo&artist='
+			 + encodeURIComponent(tags.artist)
+			 + '&track='
+			 + encodeURIComponent(tags.title)
+			 + '&api_key='
+			 + lastfmConfig.api_key
+			 + '&format=json',
+			function(err, req, response, obj){
+				var image = null;
+				if(typeof obj.track.album !== 'undefined'){
+					image = obj.track.album.image[3]['#text'];
+				}
+				res.render('partials/songdetails', {song: {artist: obj.track.artist.name, title: obj.track.name, cover: image}, layout: null});
+			});
 	});
 }
 

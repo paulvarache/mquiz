@@ -26,7 +26,7 @@ app.use(express.favicon());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({secret : "BLAHBLAH"}));
-app.use(authorize());
+//app.use(authorize());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -56,6 +56,7 @@ app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 app.get('/adminLogin', routes.adminLogin);
 app.post('/adminLogin', routes.adminLoginPost);
+app.post('/admin/songUpload', routes.songUpload);
 
 var model = require('./model');
 model.connect(function(){
