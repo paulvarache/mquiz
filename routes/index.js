@@ -6,6 +6,8 @@ var hashToArray = function(hash){
 	return ar;
 }
 
+var tmpFiles = {};
+
 var uuid = require('uuid');
 var crypto = require('crypto');
 var config = require('konphyg')(__dirname + '/../config');
@@ -220,28 +222,85 @@ exports.songPost = function(req, res){
 	});
 }
 
-exports.songUpload = function(req, res){
-	var parser = mm(fs.createReadStream(req.files.songs.path));
-	parser.on('metadata', function(tags){
-		var client = restify.createJsonClient({
-			url: lastfmConfig.url
+exports.addMultipleSong = function(req, res){
+	var s3 = knox.createClient(s3Config);
+	songs = req.body.songs;
+	for(var i = 0; i < songs.length; i++){
+		var song = req.app.locals.Song({
+			title : songs[i].title,
+			artist : songs[i].artist,
+			cover : songs[i].cover
 		});
-		client.get(
-			'/2.0/?method=track.getinfo&artist='
-			 + encodeURIComponent(tags.artist)
-			 + '&track='
-			 + encodeURIComponent(tags.title)
-			 + '&api_key='
-			 + lastfmConfig.api_key
-			 + '&format=json',
-			function(err, req, response, obj){
-				var image = null;
-				if(typeof obj.track.album !== 'undefined'){
-					image = obj.track.album.image[3]['#text'];
-				}
-				res.render('partials/songdetails', {song: {artist: obj.track.artist.name, title: obj.track.name, cover: image}, layout: null});
+		var path = tmpFiles[songs[i].id];
+		delete tmpFiles[songs[i].id];
+		song.save(function(err, doc){
+			var s3Headers = {
+				'Content-Type': 'audio/mpeg',
+				'x-amz-acl': 'public-read'
+			};
+			s3.putFile(path, doc.id + '.mp3', s3Headers, function(err, response){
+				fs.unlinkSync(path);
 			});
-	});
+		});
+	}
+	res.send(200);
+}
+
+exports.songUpload = function(req, res){
+	if(req.files.songs.type === 'audio/mp3'){
+		var fId = uuid.v1();
+		console.log(fId);
+		tmpFiles[fId] = req.files.songs.path;
+		console.log(tmpFiles);
+		var parser = mm(fs.createReadStream(req.files.songs.path));
+		var tags = null;
+		parser.on('metadata', function(metadata){
+			tags = metadata;
+		});
+		parser.on('done', function(err){
+			if(tags !== null){
+				var client = restify.createJsonClient({
+					url: lastfmConfig.url
+				});
+				client.get(
+					'/2.0/?method=track.getinfo&artist='
+					 + encodeURIComponent(tags.artist)
+					 + '&track='
+					 + encodeURIComponent(tags.title)
+					 + '&api_key='
+					 + lastfmConfig.api_key
+					 + '&format=json',
+					function(err, requset, response, obj){
+						var image = null,
+							title =null,
+							artist = null;
+						if(typeof obj.error !== 'undefined'){
+							image = '../cover/default.png';
+							title = req.files.songs.name;
+							artist = '';
+						}else{
+							if(typeof obj.track.album !== 'undefined'){
+								image = obj.track.album.image[3]['#text'];
+							}
+							title = obj.track.name;
+							artist = obj.track.artist.name;
+						}
+						res.render('partials/uploadDetails', {song: {id: fId, artist: artist, title: title, cover: image, okToUpload: true}, layout: null});
+					});
+			}else{
+				res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: '../cover/default.png', okToUpload: true}, layout: null});
+			}
+		});
+	}else{
+		fs.unlinkSync(req.files.song.path);
+		res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: '../cover/default.png', okToUpload: false}, layout: null});
+	}
+}
+
+exports.deleteTmpFile = function(req, res){
+	fs.unlinkSync(tmpFiles[req.params.fId]);
+	delete tmpFiles[req.params.fId];
+	res.send(200);
 }
 
 exports.salons = function(req, res){
