@@ -10,6 +10,7 @@ var path = require('path');
 var uuid = require('uuid');
 var game = require('./game');
 var authorize = require('./authorize');
+var async = require('async');
 
 var app = express();
 
@@ -26,7 +27,7 @@ app.use(express.favicon());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({secret : "BLAHBLAH"}));
-//app.use(authorize());
+app.use(authorize());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -75,16 +76,22 @@ model.connect(function(){
 
 		app.locals.Playlist.find().exec(function(err, docs){
 
-			for(var i=0; i<docs.length; i++){
-				//Salon exemple
-				var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
-				salons[salon.getId()] = salon;
-			}
-			var io = require('./gameio');
-			var httpServer = http.createServer(app).listen(app.get('port'), function(){
-			  console.log('Express server listening on port ' + app.get('port'));
-			  var gameio = new io.GameIO(salons, users, httpServer);
-			});
+			async.each(
+				docs,
+				function(item, callback){
+					var salon = new game.Salon(item.name, 'native', 2, item.id, 5);
+					salon.loadPlaylist(function(){
+						salons[salon.getId()] = salon;
+						callback();
+					});
+				},
+				function(){
+					var io = require('./gameio');
+					var httpServer = http.createServer(app).listen(app.get('port'), function(){
+					  console.log('Express server listening on port ' + app.get('port'));
+					  var gameio = new io.GameIO(salons, users, httpServer);
+					});
+				});
 		});
 	});
 });

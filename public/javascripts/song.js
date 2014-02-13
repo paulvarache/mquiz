@@ -4,6 +4,22 @@ $(document).ready(function(){
 	var artist;
 	var step = 'song';
 
+	$('.songInfo').each(function(){
+		$(this).click(function(){
+			var player = $('#previewPlayer').get(0);
+			if(!player.paused && $('#previewPlayer source').attr('id') === $(this).attr('id')){
+				player.pause();
+			}else{
+				var id = $(this).attr('id');
+				$('#previewPlayer source').attr('src', 'https://s3-eu-west-1.amazonaws.com/mquiz-dev/'+id+'.mp3');
+				$('#previewPlayer source').attr('id', id);
+				player.pause();
+				player.load();
+				player.play();
+			}
+		});
+	});
+
 
 	$('#title').focus(function(){
 		$('#customTitle').prop('disabled', true);
@@ -94,10 +110,11 @@ $(document).ready(function(){
 				$('#songListPanel').fadeOut();
 				for(var i = 0; i<songs.length; i++){
 					var newSong = $(
-					  '<div draggable="true" class="list-group-item song songInfo" id="'+songs[i].id+'">'
-					+ '<img src="'+songs[i].cover+'" width="40px"/>'
+					  '<div draggable="true" class="list-group-item song songInfo" style="background: url('+songs[i].cover+');">'
+					+ '<div class="songInfoText">'
 					+ '<h5>'+songs[i].title+'</h5>'
 					+ '<h6>'+songs[i].artist+'</h6>'
+					+ '</div>'
 					+ '</div>');
 					$('#playlist').prepend(newSong).fadeIn();
 				}
