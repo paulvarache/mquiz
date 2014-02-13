@@ -152,7 +152,16 @@ $(document).ready(function(){
 				showOnly('playing', 'panel');
 			},2000);
 		}
-	})
+	});
+
+	socket.on('logged', function(myId, songs){
+		console.log(songs);
+		for(var k in songs){
+			console.log(k);
+			var player = $('#'+k).get(0);
+			player.currentTime = songs[k];
+		}
+	});
 
 	socket.on('continue', function(){
 		if(myId != ''){

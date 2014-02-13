@@ -1,56 +1,45 @@
 <div class="container-fluid">
-<h2>Liste des musiques</h2>
-<a href="#" id="song-add" class="btn btn-default pull-right">Ajouter une musique</a>
-</div>
-<div class="container" style="display: none" id="song-add-form">
+	<h2>Liste des musiques</h2>
 	<div class="col-md-9">
-		<form action="/song" method="POST" role="form" enctype="multipart/form-data" id='form'>
-			<legend>Ajouter une musique</legend>
-
-			<div class="form-group" style="display: none" id="songGroup">
-				<label for="song">Fichier audio</label>
-				<input type="file" class="form-control" id="song" name="song">
+		<input type="file" id="song" name="songs" data-url="/admin/songUpload" multiple style='display: none'>
+		<button type='button' class='btn btn-primary' id='triggerFile'>Ajouter des fichiers <span class="glyphicon glyphicon-upload"></span></button>
+		<br/>
+		<br/>
+		<div class="panel panel-default" id='songListPanel' style='display: none'>
+			<div class="panel-heading">
+				<h3 class="panel-title panel-title-with-btn">Musiques à ajouter</h3>
+				<button class='btn btn-default btn-sm pull-right' id='addAll'>Tout ajouter</button>
+				<div class="clearfix"></div>
 			</div>
-
-			<div class="form-group" style="display : none" id="titleGroup">
-				<label for="customTitle">Titre</label>
-				<input class="form-control" type="text" id="customTitle" name="customTitle" /><br/>
-				<select size="10" class="form-control" id="title"></select>
-			</div>
-
-			<div class="form-group" id="artistGroup">
-				<label for="artist">Artiste</label>
-				<input type="text" class="form-control" id="artist" placeholder="Artist">
-			</div>
-
-			<input type="hidden" id="titleField" name="title" />
-			<input type="hidden" id="artistField" name="artist" />
-			<input type="hidden" id="imageField" name="cover" />
-
-			<button type="button" id="next" class="btn btn-primary">Suivant</button>
-		</form>
-	</div>
-	<div class="col-md-3" id="song-info">
-		<h3 id="track-name"></h3>
-		<h4 id="artist-name"></h4>
-		<img id='artist-image' class="thumbnail img-responsive" />
+			<ul class='list-group' id='songList'></ul>
+		</div>
 	</div>
 </div>
 <br/>
 <div class="row-fluid">
+	<audio id="previewPlayer">
+        <source src="" type="audio/mpeg">
+    </audio>
 	<div class="col-md-12">
 		<div class="playlist" id="playlist">
 			{{#songs}}
-			<div draggable="true" class="list-group-item song songInfo" id="{{id}}">
-				<img src="{{cover}}" width="40px"/>
+			<div draggable="true" class="list-group-item song songInfo" id="{{id}}" style="background: url('{{cover}}');">
+			<div class='playButton'></div>
+			<div class='songInfoText'>
 				<h5>{{title}}</h5>
 				<h6>{{artist}}</h6>
 			</div>
+			</div>
+			{{/songs}}
+			{{^songs}}
+			<h4>Aucune musique pour le moment</h4>
 			{{/songs}}
 		</div>
 	</div>
 </div>
 
 {{#yield-javascripts}}
-	<script type="text/javascript" src="/javascripts/song.js"></script>
+<script type="text/javascript" src="/javascripts/song.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.fileupload.js"></script>
 {{/yield-javascripts}}

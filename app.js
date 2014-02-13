@@ -10,6 +10,7 @@ var path = require('path');
 var uuid = require('uuid');
 var game = require('./game');
 var authorize = require('./authorize');
+var async = require('async');
 
 var app = express();
 
@@ -56,6 +57,9 @@ app.get('/play/:salonid', routes.play);
 app.get('/checkPasswd/:salonid/:password', routes.checkPasswd);
 app.get('/adminLogin', routes.adminLogin);
 app.post('/adminLogin', routes.adminLoginPost);
+app.post('/admin/songUpload', routes.songUpload);
+app.get('/admin/deleteTmpFile/:fId', routes.deleteTmpFile);
+app.post('/admin/addMultipleSong', routes.addMultipleSong);
 
 var model = require('./model');
 model.connect(function(){
@@ -72,16 +76,22 @@ model.connect(function(){
 
 		app.locals.Playlist.find().exec(function(err, docs){
 
-			for(var i=0; i<docs.length; i++){
-				//Salon exemple
-				var salon = new game.Salon(docs[i].name, 'native', 2, docs[i].id, 5);
-				salons[salon.getId()] = salon;
-			}
-			var io = require('./gameio');
-			var httpServer = http.createServer(app).listen(app.get('port'), function(){
-			  console.log('Express server listening on port ' + app.get('port'));
-			  var gameio = new io.GameIO(salons, users, httpServer);
-			});
+			async.each(
+				docs,
+				function(item, callback){
+					var salon = new game.Salon(item.name, 'native', 2, item.id, 5);
+					salon.loadPlaylist(function(){
+						salons[salon.getId()] = salon;
+						callback();
+					});
+				},
+				function(){
+					var io = require('./gameio');
+					var httpServer = http.createServer(app).listen(app.get('port'), function(){
+					  console.log('Express server listening on port ' + app.get('port'));
+					  var gameio = new io.GameIO(salons, users, httpServer);
+					});
+				});
 		});
 	});
 });

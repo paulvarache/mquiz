@@ -15,6 +15,9 @@
     "mongodb": "*",
     "mongoose" : "*",
     "knox" : "*",
-    "konphyg": "*"
+    "konphyg": "*",
+    "musicmetadata": "*",
+    "restify": "*",
+    "async": "*"
   }
 }
