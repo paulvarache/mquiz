@@ -11,17 +11,12 @@
     "socket.io": "*",
     "uuid": "*",
     "levenshtein": "*",
-    "crypto": "*",
     "mongodb": "*",
     "mongoose": "*",
     "knox": "*",
-    "konphyg": "*"
-  },
-  "devDependencies": {
-    "dalekjs": "0.0.8",
-    "dalek-browser-chrome": "0.0.9",
-    "dalek-browser-firefox": "0.0.5",
-    "dalek-reporter-html": "0.0.3",
-    "dalek-internal-config": "0.0.2"
+    "konphyg": "*",
+    "musicmetadata": "*",
+    "restify": "*",
+    "async": "*"
   }
 }

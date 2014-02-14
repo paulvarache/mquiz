@@ -17,26 +17,31 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 	var songlistLength = songlistLength;
 	var songlist = [];
 	var parent = this;
-	Song.find()
-		.where({playlists : songlistId})
-		.exec(function(err, songs){
-			songlist = songs;
-			parent.shuffleSonglist();
-			songlist = songlist.slice(0, songlistLength);
-		});
 	var interval = null;
+	var startPositions = {};
 
-	this.reinit = function(){
-		currentSong = 0;
+
+	this.getStartPositions = function(){
+		return startPositions;
+	}
+	this.loadPlaylist = function(callback){
 		Song.find()
 		.where({playlists : songlistId})
 		.exec(function(err, songs){
 			songlist = songs;
 			parent.shuffleSonglist();
 			songlist = songlist.slice(0, songlistLength);
+			for(var i = 0; i < songlist.length; i++){
+				var startPosition = 0
+				if(songlist[i].duration > 60){
+					var limitMax = songlist[i].duration - 60;
+					startPosition = Math.floor((Math.random() * limitMax) + 1);
+				}
+				startPositions[songlist[i].id] = startPosition;
+			}
+			callback();
 		});
-		status = 'waiting-users';
-	}
+	};
 	this.changeName = function(newUsr, callback){
 		var adjectif = require('./adjectif');
 		adjectif.getName(newUsr.pseudo, false, function(name){
@@ -102,9 +107,6 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 	};
 	this.getSonglist = function(){
 		return songlist;
-	};
-	this.getSonglistArray = function(){
-		return this.hashToArray(songlist);
 	};
 	this.getCurrentSongIndex = function(){
 		return songlist[currentSong].id

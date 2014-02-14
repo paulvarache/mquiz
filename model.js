@@ -32,6 +32,7 @@ var songSchema = new Schema({
 	title : String,
 	cover : String,
 	artist : String,
+	duration : Number,
 	playlists : [],
 });
 songSchema.statics.findByPlaylistId = function(plId, callback){

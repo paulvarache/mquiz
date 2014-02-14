@@ -6,11 +6,18 @@ var hashToArray = function(hash){
 	return ar;
 }
 
+var tmpFiles = {};
+
 var uuid = require('uuid');
 var crypto = require('crypto');
 var config = require('konphyg')(__dirname + '/../config');
 var s3Config = config('amazons3');
+var lastfmConfig = config('lastfm');
 var knox = require('knox');
+var mm = require('musicmetadata');
+var fs = require('fs');
+var restify = require('restify');
+var async = require('async');
 
 /*
  * GET home page.
@@ -48,7 +55,7 @@ exports.play = function(req, res){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
-		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglistArray(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
+		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglist(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
 	}
 }
 
@@ -190,6 +197,7 @@ exports.song = function(req, res){
 		res.render('song', {
 			songs : docs,
 			admin: true,
+			bucket: s3Config.bucket,
 			navbarInfo : {user : req.session.user}});
 	});
 }
@@ -214,6 +222,100 @@ exports.songPost = function(req, res){
 			res.redirect('/admin/song');
 		});
 	});
+}
+
+exports.addMultipleSong = function(req, res){
+	var s3 = knox.createClient(s3Config);
+	songs = req.body.songs;
+	async.each(songs, function(item, callback){
+		var path = tmpFiles[item.id];
+		var parser = mm(fs.createReadStream(path), {duration: true});
+		parser.on('done', function(){
+			console.log('done');
+		});
+		parser.on('metadata', function(tags){
+			console.log('metadata');
+			var song = req.app.locals.Song({
+				title : item.title,
+				artist : item.artist,
+				cover : item.cover,
+				duration : tags.duration
+			});
+			delete tmpFiles[item.id];
+			song.save(function(err, doc){
+				var s3Headers = {
+					'Content-Type': 'audio/mpeg',
+					'x-amz-acl': 'public-read'
+				};
+				console.log(doc.id);
+				s3.putFile(path, doc.id + '.mp3', s3Headers, function(err, response){
+					console.log('One file transfered');
+					callback();
+					//fs.unlinkSync(path);
+				});
+			});
+		});
+	},
+	function(){
+		console.log('Transfert all completed')
+	});
+	res.send(200);
+}
+
+exports.songUpload = function(req, res){
+	if(req.files.songs.type === 'audio/mp3'){
+		var fId = uuid.v1();
+		tmpFiles[fId] = req.files.songs.path;
+		var parser = mm(fs.createReadStream(req.files.songs.path), {duration: true});
+		var tags = null;
+		parser.on('metadata', function(metadata){
+			tags = metadata;
+			console.log(tags);
+		});
+		parser.on('done', function(err){
+			if(tags !== null){
+				var client = restify.createJsonClient({
+					url: lastfmConfig.url
+				});
+				client.get(
+					'/2.0/?method=track.getinfo&artist='
+					 + encodeURIComponent(tags.artist)
+					 + '&track='
+					 + encodeURIComponent(tags.title)
+					 + '&api_key='
+					 + lastfmConfig.api_key
+					 + '&format=json',
+					function(err, requset, response, obj){
+						var image = null,
+							title =null,
+							artist = null;
+						if(typeof obj.error !== 'undefined'){
+							image = '../cover/default.png';
+							title = req.files.songs.name;
+							artist = '';
+						}else{
+							if(typeof obj.track.album !== 'undefined'){
+								image = obj.track.album.image[3]['#text'];
+							}
+							title = obj.track.name;
+							artist = obj.track.artist.name;
+						}
+						res.render('partials/uploadDetails', {song: {id: fId, artist: artist, title: title, cover: image, okToUpload: true}, layout: null});
+					});
+			}else{
+				res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: '../cover/default.png', okToUpload: true}, layout: null});
+			}
+		});
+	}else{
+		fs.unlinkSync(req.files.song.path);
+		res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: '../cover/default.png', okToUpload: false}, layout: null});
+	}
+}
+
+exports.deleteTmpFile = function(req, res){
+	fs.unlinkSync(tmpFiles[req.params.fId]);
+	delete tmpFiles[req.params.fId];
+	res.send(200);
 }
 
 exports.salons = function(req, res){

@@ -2,7 +2,23 @@ $(document).ready(function(){
 	var reqEnd = '&api_key=5216edf37ad15286cfb41070bd484906&format=json';
 	var tracks;
 	var artist;
-	var step = 'artist';
+	var step = 'song';
+
+	$('.songInfo').each(function(){
+		$(this).click(function(){
+			var player = $('#previewPlayer').get(0);
+			if(!player.paused && $('#previewPlayer source').attr('id') === $(this).attr('id')){
+				player.pause();
+			}else{
+				var id = $(this).attr('id');
+				$('#previewPlayer source').attr('src', $('#s3URI').val()+id+'.mp3');
+				$('#previewPlayer source').attr('id', id);
+				player.pause();
+				player.load();
+				player.play();
+			}
+		});
+	});
 
 
 	$('#title').focus(function(){
@@ -25,114 +41,73 @@ $(document).ready(function(){
 		$('#title').val('');
 
 	});
-	$('#form').submit(function(e){
-		var parts = $('#song').val().split('.');
-		if(parts[parts.length - 1] !== 'mp3'){
-			e.preventDefault();
-			console.log('mp3 only');
-		}else{
-			$(this).fadeOut();
-			$(this).parent().append('<h4>Envoi en cours...</h4>');
-		}
-	});
-	$('#next').click(function(){
-		if(step === 'artist'){
-			if($('#artist').val() !== ''){
-				searchArtist(function(){
-					getTracks();
-					$('#artistGroup').slideToggle();
-					$('#titleGroup').slideToggle();
-					step = 'title';
+	var processHandling = function(data){
+		console.log(data);
+	};
+	var uploadSuccess = function(){
+		console.log('success');
+	}
+	var addSong = function(data){
+		var li = $(data.result);
+		li.find('.deleteTmp').click(function(){
+			$.get('/admin/deleteTmpFile/'+$(this).attr('id'), function(){
+				li.slideToggle(function(){
+					$(this).remove();
+					if($('#songList').children().length === 0){
+						$('#songListPanel').fadeOut();
+					}
 				});
-			}
-		}else if(step === 'title'){
-			var info = {};
-			if($('#title').val() === null){
-				info.track = $('#customTitle').val();
-				info.artist = artist;
-				info.image = '';
-			}else{
-				var option = $('#track'+$('#title').val());
-				info = option.data('info');
-			}
-			$.get('http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist='+info.artist+'&track='+info.track+reqEnd, function(data){
-				console.log(data);
-				if(typeof data.error === 'undefined'){
-					info.track = data.track.name;
-					info.artist = data.track.artist.name;
-					info.image = data.track.album.image[3]['#text'];
-				}
-				$('#titleField').val(info.track);
-				$('#artistField').val(info.artist);
-				$('#imageField').val(info.image);
-				$('#artist-name').html(info.artist);
-				$('#artist-image').attr('src', info.image);
-				$('#track-name').html(info.track);
-				$('#titleGroup').slideToggle();
-				$('#songGroup').slideToggle();
-				$(this).html('Ajouter');
-				$(this).attr('type', 'submit');
-				step = '';
 			});
-		}
-	});
-	$('#artist').keyup(function(){
-		if($('#artist').val() !== ''){
-			searchArtist();
-		}else{
-			$('#artist-name').html('');
-			$('#artist-image').attr('src', '');
-		}
-	});
-	$('#title').change(function(){
-		var option = $('#track'+$(this).val());
-		var info = option.data('info');
-		$('#artist-image').attr('src', info.image);
-		$('#track-name').html(info.track);
-	});
-	$('#song-add').click(function(e){
-		e.preventDefault();
-		$('#song-add-form').slideToggle();
-		$(this).slideUp();
-	});
-	var getTracks = function(){
-		if(artist === ''){
-			artist = $('#artist').val();
-			$('#title').hide();
-		}else{
-			$.get('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+artist+reqEnd, function(data){
-					tracks = data.toptracks.track;
-					displayTracks(tracks);
-			});
-		}
-	}
-	var displayTracks = function(tracks){
-		artist = tracks[0].artist.name;
-		for(var i=0; i<tracks.length; i++){
-			var json = {
-							track : tracks[i].name,
-							artist : tracks[i].artist.name,
-							image : typeof tracks[i].image !== 'undefined' ? tracks[i].image[3]['#text'] : '/cover/default.png',
-						}
-						console.log(tracks[i]);
-			var option = $('<option id="track'+i+'" value="'+i+'">'+tracks[i].name+'</option>');
-			option.data('info', json);
-			$('#title').append(option);
-		}
-	}
-	var searchArtist = function(callback){
-		callback = callback || function(){};
-		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+$('#artist').val()+reqEnd, function(data){
-			if(typeof data.error === 'undefined'){
-				$('#artist-name').html(data.artist.name);
-				$('#artist-image').attr('src', data.artist.image[4]['#text']);
-				artist = data.artist.name;
-			}else{
-				$('#artist-name').html($('#artist').val());
-				$('#artist-image').attr('src', '');
-				artist = '';
-			}
-			callback();
 		});
+		$('#songList').append(li);
+		li.hide().slideToggle();
 	}
+	$('#triggerFile').click(function(){
+		$('#song').trigger('click');
+	})
+	$('#song').fileupload({
+		dataType: 'html',
+		done: function(e, data){
+			if($('#songListPanel').css('display') === 'none'){
+				$('#songListPanel').fadeIn(function(){
+					addSong(data);
+				});
+			}else{
+				addSong(data);
+			}
+		}
+	});
+	$('#addAll').click(function(){
+		var songs = [];
+		var error = false;
+		$('.uploadDetails').each(function(){
+			if($(this).find('#title').val() === '' || $(this).find('#title').val() === ''){
+				error = true;
+				return false;
+			}
+			var song = {
+				id: $(this).attr('id').substr(5, $(this).attr('id').length),
+				title: $(this).find('#title').val(),
+				artist: $(this).find('#artist').val(),
+				cover: $(this).find('#cover').attr('src')
+			}
+			songs.push(song);
+		});
+		if(!error){
+			$.post('/admin/addMultipleSong', {songs: songs}, function(){
+				$('#songList').empty();
+				$('#songListPanel').fadeOut();
+				for(var i = 0; i<songs.length; i++){
+					var newSong = $(
+					  '<div draggable="true" class="list-group-item song songInfo" style="background: url('+songs[i].cover+');">'
+					+ '<div class="songInfoText">'
+					+ '<h5>'+songs[i].title+'</h5>'
+					+ '<h6>'+songs[i].artist+'</h6>'
+					+ '</div>'
+					+ '</div>');
+					$('#playlist').prepend(newSong).fadeIn();
+				}
+			});
+		}
+	});
 });
