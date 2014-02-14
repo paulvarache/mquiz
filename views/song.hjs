@@ -17,6 +17,7 @@
 </div>
 <br/>
 <div class="row-fluid">
+	<input type='hidden' id='s3URI' value="https://s3-eu-west-1.amazonaws.com/{{bucket}}/" />
 	<audio id="previewPlayer">
         <source src="" type="audio/mpeg">
     </audio>

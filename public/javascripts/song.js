@@ -11,7 +11,7 @@ $(document).ready(function(){
 				player.pause();
 			}else{
 				var id = $(this).attr('id');
-				$('#previewPlayer source').attr('src', 'https://s3-eu-west-1.amazonaws.com/mquiz-dev/'+id+'.mp3');
+				$('#previewPlayer source').attr('src', $('#s3URI').val()+id+'.mp3');
 				$('#previewPlayer source').attr('id', id);
 				player.pause();
 				player.load();

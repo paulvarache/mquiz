@@ -197,6 +197,7 @@ exports.song = function(req, res){
 		res.render('song', {
 			songs : docs,
 			admin: true,
+			bucket: s3Config.bucket,
 			navbarInfo : {user : req.session.user}});
 	});
 }
