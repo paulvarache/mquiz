@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
 	$(".panel").hide();
-	showOnly('before-play', 'panel');
+	showOnly('before-play', 'appPanel');
 
 	var resetScorePlusPosition = function(){
 		$('#score-plus').css('top', parseInt(window.innerHeight) / 2+'px').css('left', parseInt(window.innerWidth) / 2+'px');
@@ -18,6 +18,8 @@ $(document).ready(function(){
 	var playing;
 	var mySongList;
 	var currentSong;
+	var audioList = {};
+	var playingId = null;
 
 	$('#saySomething li').click(function(e){
 		e.preventDefault();
@@ -62,8 +64,18 @@ $(document).ready(function(){
 		location.reload();
 	});
 
-	socket.on('logged', function(myId){
-		$('#app').fadeIn();
+	socket.on('logged', function(myId, songs, startPositions){
+		var url = $('#s3URI').val();
+		for(var k in songs){
+			var start = startPositions[songs[k]._id] * 1000;
+			var ap = new Howl({
+				urls : [url+songs[k]._id+'.mp3'],
+				sprite: {
+					def: [start, startPositions[songs[k]._id]+60000]
+				}
+			});
+			audioList[songs[k]._id] = ap;
+		}
 	});
 
 	socket.on('message', function(user, message){
@@ -84,6 +96,8 @@ $(document).ready(function(){
 		$.get('user/'+user.id+'/salon/'+salonId, function(data){
 			if(user.id == myId){
 				$("#usrlist").prepend(data);
+				$('#waiting-page').remove();
+				$('#app').fadeIn();
 			}else{
 				$("#usrlist").append(data);
 			}
@@ -112,10 +126,11 @@ $(document).ready(function(){
 		if(myId != ''){
 			console.log('PLAY');
 			currentSong = song_id;
-			showOnly('playing', 'panel');
+			showOnly('playing', 'appPanel');
 			$('#response').focus();
-			playing = $('#'+song_id).get(0);
-			playing.play();
+			playing = audioList[song_id];
+			playingId = song_id;
+			playing.play('def');
 		}
 	});
 
@@ -149,19 +164,10 @@ $(document).ready(function(){
 
 	socket.on('penalite', function(){
 		if(myId != ''){
-			showOnly('penalite', 'panel');
+			showOnly('penalite', 'appPanel');
 			setTimeout(function(){
-				showOnly('playing', 'panel');
+				showOnly('playing', 'appPanel');
 			},2000);
-		}
-	});
-
-	socket.on('logged', function(myId, songs){
-		console.log(songs);
-		for(var k in songs){
-			console.log(k);
-			var player = $('#'+k).get(0);
-			player.currentTime = songs[k];
 		}
 	});
 
@@ -178,13 +184,12 @@ $(document).ready(function(){
 		if(myId != ''){
 			console.log('WINNER');
 			$.get('/songdetails/'+currentSong, function(data){
-				console.log(data);
 				html = $(data);
 				html.find('#foundby').html('Trouvé par '+winner.pseudo);
 				$('#last-songs').hide().prepend(html[0]).fadeIn();
 			});
 			if(winner.id === myId){
-				$('#rem-'+$(playing).attr('id')).attr('src', '/images/check.png');
+				$('#rem-'+playingId).attr('src', '/images/check.png');
 				$('#score-plus').fadeIn().animate({"font-size" : "1000%", "margin-top": "-200px", "margin-left": "-80px"}, {duration: 500, complete: function(){
 					setTimeout(function(){
 						$('#score-plus').fadeOut(function(){
@@ -193,12 +198,12 @@ $(document).ready(function(){
 					},3000);
 				}});
 			}else{
-				$('#rem-'+$(playing).attr('id')).attr('src', '/images/wrong.png');
+				$('#rem-'+playingId).attr('src', '/images/wrong.png');
 			}
-			$('#rem-'+$(playing).attr('id')).tooltip('hide').attr('data-toggle', '');
+			$('#rem-'+playingId).tooltip('hide').attr('data-toggle', '');
 			playing.pause();
-			playing.parentNode.remove();
-			showOnly('wait', 'panel');
+			delete playing;
+			showOnly('wait', 'appPanel');
 		}
 	});
 
@@ -214,24 +219,30 @@ $(document).ready(function(){
 
 	socket.on('next-song', function(){
 		if(myId != ''){
-			showOnly('wait', 'panel');
+			showOnly('wait', 'appPanel');
 			$('#response').fadeIn();
 			$('#submit-response').html('STOP').prop('disable', false);
 		}
 	});
 
 	socket.on('game-end', function(users){
+		console.log('GAME-END');
 		if(myId != ''){
 			$.get('/scores/'+salonId, function(data){
 				$('#end').html(data);
+				$('#score-table').tablesorter({sortList : [[1,0]]});
+				$('#tweetButton').click(function(e){
+					e.preventDefault();
+					window.open($(this).attr('href'), 'Partager sur Twitter',
+							'left=20,top=20,width=500,height=500,toolbar=1,resizable=0');
+				});
+				showOnly('end', 'appPanel');
 			});
-			$('#score-table').tablesorter({sortList : [[1,0]]});
-			showOnly('end', 'panel');
 		}
 	});
 
 	socket.on('not-enough-players', function(){
-		showOnly('not-enough', 'panel');
+		showOnly('not-enough', 'appPanel');
 		setTimeout(function(){
 			location.reload();
 		}, 5000);
@@ -276,7 +287,6 @@ function defaultAvatarAutoHide(value){
 function showOnly(id, multi){
 	$('#'+id).fadeIn();
 	$('.'+multi).not('#'+id).each(function(){
-		console.log($(this));
 		$(this).fadeOut();
 	});
 }

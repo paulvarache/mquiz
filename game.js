@@ -1,3 +1,8 @@
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+};
+
 /*
 * Definition de la classe Salon. Elle gère les utilisateurs et la playlist.
  */
@@ -28,9 +33,9 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		Song.find()
 		.where({playlists : songlistId})
 		.exec(function(err, songs){
-			songlist = songs;
-			parent.shuffleSonglist();
+			songlist = shuffle(songs);
 			songlist = songlist.slice(0, songlistLength);
+			console.log(songlist);
 			for(var i = 0; i < songlist.length; i++){
 				var startPosition = 0
 				if(songlist[i].duration > 60){
@@ -165,15 +170,6 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 			result.push(hash[k]);
 		}
 		return result;
-	}
-	this.shuffleSonglist = function(){
-		var i = songlist.length, shuffle = [];
-		for(;i>0;i--){
-			var j = Math.floor(Math.random() * (i - 1));
-			shuffle.push(songlist[j]);
-			songlist.splice(j, 1);
-		}
-		songlist = shuffle;
 	}
 };
 

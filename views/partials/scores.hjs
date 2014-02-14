@@ -1,20 +1,26 @@
-<h2>Fin de la partie</h2>
-<table class="table tablesorter" id='score-table'>
-    <thead>
-        <tr>
-            <th>Joueur</th>
-            <th>Score</th>
-            <th>Titres trouvés</th>
-        </tr>
-    </thead>
-    <tbody id='score-table-body'>
-        {{#users}}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Fin de la partie</h3>
+    </div>
+    <table class="table tablesorter" id='score-table'>
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Score</th>
+                <th>Titres trouvés</th>
+            </tr>
+        </thead>
+        <tbody id='score-table-body'>
+            {{#users}}
             <tr>
                 <td>{{pseudo}}</td>
                 <td>{{points}}</td>
                 <td>{{{founds}}}</td>
             </tr>
-        {{/users}}
-    </tbody>
-</table>
-<button type='button' class='btn btn-primary' id='replay'>Rejouer</button>
+            {{/users}}
+        </tbody>
+    </table>
+</div>
+<!--<a href="https://twitter.com/share?url=http://localhost:3000&text={{tweetText}}" class="btn btn-info" id="tweetButton">Tweeter le résultat</a>-->
+    <button type='button' class='btn btn-primary' id='replay'>Rejouer</button>
+

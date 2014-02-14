@@ -3,10 +3,83 @@
 		<div class="panel-heading">
 			<h2 class="panel-title">À propos</h2>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body mainPanel">
 			<img src='http://www.gravatar.com/avatar/9b9920e5798bfd8a9271224b7840b2a9' class="rounded"></img>
-			<p>Site créé par Paul Varache toujours en cours de développement.<br/>
-		    Sources disponibles sur <a href="https://github.com/paulvarache/mquiz">GitHub</a></p>
+			<ul class='modules container-fluid'>
+				<li class='node'>
+					<a href='http://nodejs.org/'>
+						node.js
+					</a>
+				</li>
+				<li class='express'>
+					<a href="http://expressjs.com/" target="_blank">
+						express
+					</a>
+				</li>
+				<li class='mongodb'>
+					<a href="https://github.com/mongodb/node-mongodb-native" target="_blank">
+						mongodb
+					</a>
+				</li>
+				<li class="mongoose">
+					<a href="http://mongoosejs.com/" target="_blank">
+						mongoose
+					</a>
+				</li>
+				<li class='hogan-express'>
+				<a href="https://github.com/vol4ok/hogan-express" target="_blank">
+						hogan-express
+					</a>
+				</li>
+				<li class='socket-io'>
+					<a href="http://socket.io/" target="_blank">
+						socket.io
+					</a>
+				</li>
+				<li class='levenshtein'>
+					<a href="https://www.npmjs.org/package/levenshtein" target="_blank">
+						levenshtein
+					</a>
+				</li>
+				<li class='knox'>
+					<a href="https://github.com/LearnBoost/knox" target="_blank">
+						knox
+					</a>
+				</li>
+				<li class='async'>
+					<a href="https://github.com/caolan/async" target="_blank">
+
+						async
+					</a>
+				</li>
+				<li class='restify'>
+					<a href="http://mcavage.me/node-restify/" target="_blank">
+
+						restify
+					</a>
+				</li>
+				<li class='konphyg'>
+					<a href="https://github.com/pgte/konphyg" target="_blank">
+
+						konphyg
+					</a>
+				</li>
+				<li class='musicmetadata'>
+					<a href="https://github.com/leetreveil/musicmetadata" target="_blank">
+
+						musicmetadata
+					</a>
+				</li>
+				<li class='uuid'>
+					<a href="https://www.npmjs.org/package/node-uuid" target="_blank">
+
+						uuid
+					</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>
+{{#yield-stylesheets}}
+<link rel='stylesheet' type='text/css' href='stylesheets/apropos.css' />
+{{/yield-stylesheets}}

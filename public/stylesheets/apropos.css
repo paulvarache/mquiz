@@ -1,0 +1,99 @@
+.mainPanel{
+	text-align: center;
+}
+.rounded{
+	border-radius: 50%;
+	width: 120px;
+}
+
+.modules li{
+	display: inline-block;
+	position: absolute;
+}
+.modules{
+	position: relative;
+	width: 800px;
+	height: 400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.modules a{
+	color: #555;
+	-webkit-transition: color 500ms;
+	-moz-transition: color 500ms;
+	-o-transition: color 500ms;
+}
+.modules a:hover{
+	color: #333;
+	text-decoration: none;
+}
+
+.node{
+	font-size: 150px;
+	left:180px;
+}
+.express{
+	font-size: 100px;
+	top: 105px;
+	left: 160px;
+}
+.mongodb{
+	font-size: 35px;
+	top:32px;
+	left: 420px;
+}
+.mongoose{
+	font-size: 22px;
+	top: 108px;
+	left: 506px;
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+}
+.hogan-express{
+	font-size: 33px;
+	top: 176px;
+	left: 510px;
+}
+.socket-io{
+	font-size: 57px;
+	top: 193px;
+	left: 44px;
+}
+.levenshtein{
+	top: 108px;
+	left: 145px;
+	font-size: 15px;
+	-webkit-transform: rotate(-90deg);
+	-moz-transform: rotate(-90deg);
+	-o-transform: rotate(-90deg);
+}
+.knox{
+	font-size: 63px;
+	top: 47px;
+	left: 44px;
+}
+.async{
+	font-size: 25px;
+	top: 202px;
+	left: 474px;
+}
+.restify{
+	font-size: 70px;
+	top: 193px;
+	left: 281px;
+}
+.konphyg{
+	font-size: 54px;
+	left: 541px;
+	top: 201px;
+}
+.musicmetadata{
+	font-size: 63px;
+	left: -24px;
+}
+.uuid{
+	left: 579px;
+	top: 48px;
+	font-size: 16px;
+}

@@ -14,7 +14,7 @@ var GameIO = function(salons, users, httpServer){
 					socket.emit('newusr', salonUsers[k]);
 				}
 				io.sockets.emit('newusr', me);
-				socket.emit('logged', me.id, salon.getStartPositions());
+				socket.emit('logged', me.id, salon.getSonglist(), salon.getStartPositions());
 				salon.addUser(me);
 			}
 			if(salon.checkDuplicateName(me)){

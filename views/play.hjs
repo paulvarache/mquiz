@@ -1,3 +1,4 @@
+<div class="waiting-page" id="waiting-page"></div>
 <div class='app' id='app' style='display: none'>
     <div id="score-plus" class='text-success score-plus' style="display: none">+1</div>
     <div class="row">
@@ -14,11 +15,11 @@
                         <img id="rem-{{id}}" data-toggle="tooltip" data-placement="top" class="remSong img-responsive" src="/images/qmark.png" width="70px" title=" "/>
                     {{/songs}}
                 </div>
-                <div id='before-play' class='panel'>
+                <div id='before-play' class='appPanel'>
                     <h3>Vous avez rejoint la partie. Pour commencer cliquez sur "READY !"</h3>
                     <button class="btn btn-primary btn-lg" id="ready-btn">READY !</button>
                 </div>
-                <div id="playing" style="display: none;" class='panel'>
+                <div id="playing" style="display: none;" class='appPanel'>
                     <h1 id="countdown"></h1>
                     <form id="response-form" class="form game-form" role="form">
                     <input type="text" class="form-control" id='response' name='response' placeholder='Votre réponse'/><br/>
@@ -32,26 +33,18 @@
                         </div>
                     </div>
                 </div>
-                <div id="not-enough" class='panel'>
+                <div id="not-enough" class='appPanel'>
                 	<h2>Il n'y a plus assez de joueurs pour continuer la partie...</h2>
                 </div>
-                <div id="wait" class='panel'>
+                <div id="wait" class='appPanel'>
                     <h2>En attente de la chanson suivante...</h2>
                     <div class="progress progress-striped active">
                         <div id='waiting-next-song' class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 100%">
                         </div>
                     </div>
                 </div>
-                <div id="end" class='panel'></div>
-                <div id="songlist">
-                    {{#songs}}
-                    <div style="display:none">
-                        <audio id="{{id}}" preload="auto">
-                        <source src="https://s3-eu-west-1.amazonaws.com/{{bucket}}/{{id}}.mp3" type="audio/mpeg">
-                        </audio>
-                    </div>
-                    {{/songs}}
-                </div>
+                <div id="end" class='appPanel'></div>
+                <input type='hidden' id="s3URI" value='https://s3-eu-west-1.amazonaws.com/{{bucket}}/' />
             </div>
         </div>
         <div class="col-md-2">
@@ -81,6 +74,7 @@
     </script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/javascripts/app.js"></script>
+    <script type="text/javascript" src="/javascripts/howler.js"></script>
 {{/yield-javascripts}}
 {{#yield-stylesheets}}
     <link rel="stylesheet" href="/stylesheets/mquiz.css" />

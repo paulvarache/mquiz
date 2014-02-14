@@ -97,7 +97,33 @@ exports.songdetails = function(req, res){
 exports.scores = function(req, res){
 	var salon = req.app.locals.salons[req.params.salonid];
 	var users = salon.getUsersArray();
-  	return res.render('partials/scores', { users: users , layout : null});
+	var winner = users[0];
+	for(var i=0; i<users.length; i++){
+		if(users[i].points > winner.points){
+			winner = users[i];
+		}
+	}
+	var text = '';
+	var players = '';
+	for(var i=0; i<users.length; i++){
+		if(users[i].id !== req.session.user.id){
+			players += users[i].pseudo;
+			var separateur = (i === users.length - 2 ? ' et ' : ', ');
+			separateur = (i === users.length - 1 ? '' : separateur);
+			players += separateur;
+		}
+	}
+	if(winner.id === req.session.user.id){
+		text = "Je viens d'écraser ";
+		text += players;
+		text += " avec un score de ";
+		text += winner.points;
+		text += " sur @MQuiz";
+		console.log(text);
+	}else{
+		text = 'Je viens de faire un blind test sur @MQuiz avec '+players;
+	}
+  	return res.render('partials/scores', { users: users , tweetText: encodeURIComponent(text), layout : null});
 };
 
 /*

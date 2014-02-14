@@ -46,7 +46,7 @@ body {
 .cover{
 	width: 100px;
 }
-.app .panel, #remSongs{
+.appPanel, #remSongs{
 	text-align: center;
 	background-color: transparent;
 }
@@ -160,12 +160,14 @@ row{
 .more{
 	padding: 15px;
 }
-.rounded{
-	border-radius: 50%;
-}
 .uploadDetails img, .uploadDetails div{
 	display: inline-block;
 }
 .panel-title-with-btn{
 	display: inline-block;
+}
+.apropos-icon{
+	height: 20px;
+	display: inline-block;
+	margin: 5px;
 }

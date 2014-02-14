@@ -15,7 +15,12 @@
 				</ul>
 			</div>
 			<div class='panel panel-default more'>
-				<p class='text-muted'>2014 - MQuiz</p>
+				<p class='text-muted'>2014 - MQuiz. Powered by</p>
+				<img class='apropos-icon img-responsive' src='images/node.png' />
+				<img class='apropos-icon img-responsive' src='images/mongo.png' />
+				<img class='apropos-icon img-responsive' src='images/aws.png' />
+				<br/>
+				<br/>
 				<a href="/apropos">À propos</a>
 			</div>
 		</div>
@@ -24,7 +29,7 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">Salons publics</h3>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body text-muted">
 					Jouez avec des inconnus.
 				</div>
 				<ul class="list-group">
@@ -42,11 +47,12 @@
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Salons privés</h3>
-				</div>
-				<div class="panel-body">
-					Jouez entre amis.
+					<h3 class="panel-title panel-title-with-btn">Salons privés</h3>
 					<button type="button" class="btn btn-default pull-right" id="add-salon">Nouveau salon</button>
+					<div class="clearfix"></div>
+				</div>
+				<div class="panel-body text-muted">
+					Jouez entre amis.
 				</div>
 				<ul class="list-group">
 					{{#customSalons}}
