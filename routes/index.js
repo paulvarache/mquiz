@@ -270,9 +270,13 @@ exports.adminLoginPost = function(req, res){
 			req.session.admin = true;
 			res.redirect('/admin/playlists');
 		}else{
-			res.render('adminLogin', {error : "Accès refusé: Mauvais mot de passe", username: username, navbarInfo : {user : req.session.user}} )
+			res.render('adminLogin', {error : "Accès refusé: Mauvais mot de passe", username: username, navbarInfo : {user : req.session.user}} );
 		}
 	}else{
-		res.render('adminLogin', {error : "Accès refusé: Mauvais identifiant", navbarInfo : {user : req.session.user}} )
+		res.render('adminLogin', {error : "Accès refusé: Mauvais identifiant", navbarInfo : {user : req.session.user}} );
 	}
+}
+
+exports.apropos = function(req, res){
+	res.render('apropos', {navbarInfo : {user : req.session.user}});
 }

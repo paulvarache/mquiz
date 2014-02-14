@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
         <link rel="stylesheet" href="/stylesheets/bootstrap-theme.min.css" />
         <link rel="stylesheet" href="/stylesheets/mquiz.css" />
+        {{{ yield-stylesheets }}}
     </head>
     <body>
         {{#navbarInfo}}

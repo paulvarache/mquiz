@@ -1,10 +1,10 @@
-<div class='container'>
+<div class='container' id="adminLogin">
 	{{#error}}
 		<div class="alert alert-danger">
 		{{error}}
 		</div>
 	{{/error}}
-	<form action="adminLogin" method="POST" role="form">
+	<form action="adminLogin" method="POST" role="form" id="adminForm">
 		<legend>Connexion administrateur</legend>
 		<div class="form-group">
 			<label for="">Login</label>

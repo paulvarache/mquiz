@@ -6,7 +6,6 @@ html {
 body {
   width: auto !important;
   overflow-x: hidden !important;
-  height: 100vh;
   background-color: transparent;
 }
 .login-full{
@@ -47,7 +46,7 @@ body {
 .cover{
 	width: 100px;
 }
-.panel, #remSongs{
+.app .panel, #remSongs{
 	text-align: center;
 	background-color: transparent;
 }
@@ -131,4 +130,10 @@ row{
 	max-height: 30vh;
 	overflow-y: auto;
 	margin-bottom: 5px;
+}
+.more{
+	padding: 15px;
+}
+.rounded{
+	border-radius: 50%;
 }

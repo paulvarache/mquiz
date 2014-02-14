@@ -25,7 +25,6 @@ $(document).ready(function(){
 		$('#title').val('');
 
 	});
-
 	$('#form').submit(function(e){
 		var parts = $('#song').val().split('.');
 		if(parts[parts.length - 1] !== 'mp3'){
@@ -38,50 +37,56 @@ $(document).ready(function(){
 	});
 	$('#next').click(function(){
 		if(step === 'artist'){
-			getTracks();
-		}else if(step === 'title'){
-			var info
-			if($('#title').val() === ''){
-
-			}else{
-
+			if($('#artist').val() !== ''){
+				searchArtist(function(){
+					getTracks();
+					$('#artistGroup').slideToggle();
+					$('#titleGroup').slideToggle();
+					step = 'title';
+				});
 			}
-			var option = $('#track'+$('#title').val());
-			var info = option.data('info');
+		}else if(step === 'title'){
+			var info = {};
+			if($('#title').val() === null){
+				info.track = $('#customTitle').val();
+				info.artist = artist;
+				info.image = '';
+			}else{
+				var option = $('#track'+$('#title').val());
+				info = option.data('info');
+			}
 			$.get('http://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist='+info.artist+'&track='+info.track+reqEnd, function(data){
 				console.log(data);
+				if(typeof data.error === 'undefined'){
+					info.track = data.track.name;
+					info.artist = data.track.artist.name;
+					info.image = data.track.album.image[3]['#text'];
+				}
+				$('#titleField').val(info.track);
+				$('#artistField').val(info.artist);
+				$('#imageField').val(info.image);
+				$('#artist-name').html(info.artist);
+				$('#artist-image').attr('src', info.image);
+				$('#track-name').html(info.track);
+				$('#titleGroup').slideToggle();
+				$('#songGroup').slideToggle();
+				$(this).html('Ajouter');
+				$(this).attr('type', 'submit');
+				step = '';
 			});
-			$('#titleField').val(info.track);
-			$('#artistField').val(info.artist);
-			$('#imageField').val(info.image);
-			$('#titleGroup').slideToggle();
-			$('#songGroup').slideToggle();
-			$(this).html('Ajouter');
-			$(this).attr('type', 'submit');
-			step = '';
 		}
 	});
 	$('#artist').keyup(function(){
-		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+$(this).val()+reqEnd, function(data){
-			console.log(data);
-			if(typeof data.error === 'undefined'){
-				if($('#artist').val() !== ''){
-					$('#artist-name').html(data.artist.name);
-					$('#artist-image').attr('src', data.artist.image[4]['#text']);
-				}else{
-					$('#artist-name').html('');
-					$('#artist-image').attr('src', '');
-				}
-				artist = data.artist.name;
-			}else{
-				artist = $('#artist').val();
-			}
-		});
+		if($('#artist').val() !== ''){
+			searchArtist();
+		}else{
+			$('#artist-name').html('');
+			$('#artist-image').attr('src', '');
+		}
 	});
 	$('#title').change(function(){
 		var option = $('#track'+$(this).val());
 		var info = option.data('info');
-		console.log(option.data('info'));
 		$('#artist-image').attr('src', info.image);
 		$('#track-name').html(info.track);
 	});
@@ -91,13 +96,18 @@ $(document).ready(function(){
 		$(this).slideUp();
 	});
 	var getTracks = function(){
-		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+artist+reqEnd, function(data){
-			console.log(data);
-				tracks = data.toptracks.track;
-				displayTracks();
-		});
+		if(artist === ''){
+			artist = $('#artist').val();
+			$('#title').hide();
+		}else{
+			$.get('http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist='+artist+reqEnd, function(data){
+					tracks = data.toptracks.track;
+					displayTracks(tracks);
+			});
+		}
 	}
-	var displayTracks = function(){
+	var displayTracks = function(tracks){
+		artist = tracks[0].artist.name;
 		for(var i=0; i<tracks.length; i++){
 			var json = {
 							track : tracks[i].name,
@@ -109,8 +119,20 @@ $(document).ready(function(){
 			option.data('info', json);
 			$('#title').append(option);
 		}
-		$('#artistGroup').slideToggle();
-		$('#titleGroup').slideToggle();
-		step = 'title';
+	}
+	var searchArtist = function(callback){
+		callback = callback || function(){};
+		$.get('http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+$('#artist').val()+reqEnd, function(data){
+			if(typeof data.error === 'undefined'){
+				$('#artist-name').html(data.artist.name);
+				$('#artist-image').attr('src', data.artist.image[4]['#text']);
+				artist = data.artist.name;
+			}else{
+				$('#artist-name').html($('#artist').val());
+				$('#artist-image').attr('src', '');
+				artist = '';
+			}
+			callback();
+		});
 	}
 });

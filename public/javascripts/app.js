@@ -11,8 +11,6 @@ $(document).ready(function(){
 
 	resetScorePlusPosition();
 
-	$('#app').fadeIn();
-
 	/*
 	* Connection to the io server
 	 */
@@ -62,6 +60,10 @@ $(document).ready(function(){
 	$('#replay').click(function(){
 		socket.emit('replay');
 		location.reload();
+	});
+
+	socket.on('logged', function(myId){
+		$('#app').fadeIn();
 	});
 
 	socket.on('message', function(user, message){

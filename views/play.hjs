@@ -61,7 +61,7 @@
     </div>
     <div class='saySomething' id='saySomething'>
         <ul class="nav nav-tabs">
-            <li class='active'><a href="#">Dire quelque chose...</a></li>
+            <li class='active'><a href="#">Chat...</a></li>
         </ul>
         <div class="tab-content" id='saySomethingTab'  style="display: none">
             <div class='tab-pane active'>
@@ -82,3 +82,6 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/javascripts/app.js"></script>
 {{/yield-javascripts}}
+{{#yield-stylesheets}}
+    <link rel="stylesheet" href="/stylesheets/mquiz.css" />
+{{/yield-stylesheets}}
