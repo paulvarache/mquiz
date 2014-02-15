@@ -27,8 +27,8 @@
 			<div draggable="true" class="list-group-item song songInfo" id="{{id}}" style="background: url('{{cover}}');">
 			<div class='playButton'></div>
 			<div class='songInfoText'>
-				<h5>{{title}}</h5>
-				<h6>{{artist}}</h6>
+				<h5 title="{{title}}">{{shortTitle}}</h5>
+				<h6 title="{{artist}}">{{shortArtist}}</h6>
 			</div>
 			</div>
 			{{/songs}}

@@ -59,11 +59,6 @@ $(document).ready(function(){
 	});
 
 	socket.emit('login', {userid : myId, salonid : salonId});
-	$("#before-play").attr('style', '');
-	$('#replay').click(function(){
-		socket.emit('replay');
-		location.reload();
-	});
 
 	/*
 	* The login response from the server
@@ -177,7 +172,8 @@ $(document).ready(function(){
 				}, 1000);
 			}else{
 				$('#response').fadeOut();
-				$('#submit-response').html(resusr.pseudo + ' cherche une réponse...').prop('disable', true);
+				$('#submit-response').html(resusr.pseudo + ' cherche une réponse...')
+				$('#submit-response').prop('disabled', true);
 			}
 			playing.pause();
 		}
@@ -197,7 +193,8 @@ $(document).ready(function(){
 		if(myId != ''){
 			console.log('CONTINUE');
 			$('#response').fadeIn();
-			$('#submit-response').html('Je sais, je sais !').prop('disable', false);
+			$('#submit-response').html('Je sais, je sais !');
+			$('#submit-response').prop('disabled', false);
 			playing.play('def');
 		}
 	});
@@ -264,7 +261,7 @@ $(document).ready(function(){
 		if(myId != ''){
 			showOnly('wait', 'appPanel');
 			$('#response').fadeIn();
-			$('#submit-response').html('Je sais, je sais !').prop('disable', false);
+			$('#submit-response').html('Je sais, je sais !').prop('disabled', false);
 		}
 	});
 
@@ -274,6 +271,10 @@ $(document).ready(function(){
 			$.get('/scores/'+salonId, function(data){
 				$('#end').html(data);
 				$('#score-table').tablesorter({sortList : [[1,0]]});
+				$('#replay').click(function(){
+					socket.emit('replay');
+					location.reload();
+				});
 				$('#tweetButton').click(function(e){
 					e.preventDefault();
 					window.open($(this).attr('href'), 'Partager sur Twitter',

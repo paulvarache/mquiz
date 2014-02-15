@@ -15,21 +15,25 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 	var type = type;
 	var name = name;
 	var players = players;
-	var status = 'waiting-users';
 	var users = {};
-	var currentSong = 0;
 	var password = password || '';
 	var songlistLength = songlistLength;
 	var songlist = [];
 	var parent = this;
+	var status = 'waiting-users';
+	var currentSong = 0;
 	var interval = null;
 	var startPositions = {};
 
-
-	this.getStartPositions = function(){
-		return startPositions;
-	}
-	this.loadPlaylist = function(callback){
+	this.init = function(callback){
+		callback = callback || function(){};
+		status = 'waiting-users';
+		currentSong = 0;
+		interval = null;
+		startPositions = {};
+		for(var k in users){
+			users[k].ready = false;
+		}
 		Song.find()
 		.where({playlists : songlistId})
 		.exec(function(err, songs){
@@ -46,6 +50,9 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 			callback();
 		});
 	};
+	this.getStartPositions = function(){
+		return startPositions;
+	}
 	this.changeName = function(newUsr, callback){
 		var adjectif = require('./adjectif');
 		adjectif.getName(newUsr.pseudo, false, function(name){

@@ -1,7 +1,7 @@
 <div class="list-group-item song songInfo" id="{{song.id}}" style="background: url('{{song.cover}}');">
 	<div class='songInfoText'>
-		<h5>{{song.title}}</h5>
-		<h6>{{song.artist}}</h6>
+		<h5 title="{{song.title}}">{{song.shortTitle}}</h5>
+		<h6 title="{{song.artist}}">{{song.shortArtist}}</h6>
 		<h6 id="found-by"></h6>
 	</div>
 </div>

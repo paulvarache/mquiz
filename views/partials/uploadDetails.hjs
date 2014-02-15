@@ -1,13 +1,11 @@
 <li class="list-group-item uploadDetails" id='song-{{song.id}}'>
 {{#song.okToUpload}}
-	{{#song.cover}}
-	<img class="thumbnail cover" id="cover" src="{{song.cover}}" />
-	{{/song.cover}}
-	{{^song.cover}}
-	<img class="thumbnail cover" id="cover" src="../cover/default.png" />
-	{{/song.cover}}
+	<div class='coverWrapper'>
+		<div class='refresh'></div>
+		<img class="thumbnail cover" id="cover" src="{{song.cover}}" />
+	</div>
 	<div>
-		<input type='text' class='form-control' id='title' value='{{song.title}}'placeholder='Titre'/>
+		<input type='text' class='form-control' id='title' value='{{song.title}}' placeholder='Titre'/>
 		<input type='text' class='form-control input-sm' id='artist' value='{{song.artist}}' placeholder='Artiste'/>
 	</div>
 	<div class='pull-right'>

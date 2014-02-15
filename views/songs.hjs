@@ -12,11 +12,11 @@
 		<div class="connected sortable playlist" id="playlist">
 			<div class="sortable-placeholder"></div>
 			{{#currentPlaylist}}
-			<div draggable="true" class="list-group-item songInfo" id="{{id}}">
-				<img src="{{cover}}" width="40px"/>
-				<h5>{{title}}</h5>
-				<h6>{{artist}}</h6>
-				<h6>{{year}}</h6>
+			<div class="list-group-item song songInfo" id="{{id}}" style="background: url('{{cover}}');">
+				<div class='songInfoText'>
+					<h5 title="{{title}}">{{shortTitle}}</h5>
+					<h6 title="{{artist}}">{{shortArtist}}</h6>
+				</div>
 			</div>
 			{{/currentPlaylist}}
 		</div>
@@ -26,11 +26,11 @@
 		<div class="connected sortable playlist" id="songlist">
 			<div class="sortable-placeholder"></div>
 			{{#songs}}
-			<div draggable="true" class="list-group-item songInfo" id="{{id}}">
-				<img src="{{cover}}" width="40px"/>
-				<h5>{{title}}</h5>
-				<h6>{{artist}}</h6>
-				<h6>{{year}}</h6>
+			<div class="list-group-item song songInfo" id="{{id}}" style="background: url('{{cover}}');">
+				<div class='songInfoText'>
+					<h5 title="{{title}}">{{shortTitle}}</h5>
+					<h6 title="{{artist}}">{{shortArtist}}</h6>
+				</div>
 			</div>
 			{{/songs}}
 		</div>

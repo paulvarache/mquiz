@@ -61,6 +61,7 @@ app.get('/apropos', routes.apropos);
 app.post('/admin/songUpload', routes.songUpload);
 app.get('/admin/deleteTmpFile/:fId', routes.deleteTmpFile);
 app.post('/admin/addMultipleSong', routes.addMultipleSong);
+app.get('/admin/getCover/:artist/:title', routes.getCover);
 
 var model = require('./model');
 model.connect(function(){
@@ -81,7 +82,7 @@ model.connect(function(){
 				docs,
 				function(item, callback){
 					var salon = new game.Salon(item.name, 'native', 2, item.id, 5);
-					salon.loadPlaylist(function(){
+					salon.init(function(){
 						salons[salon.getId()] = salon;
 						callback();
 					});

@@ -21,6 +21,9 @@ body{
 	margin-top: -50px;
 	margin-left: -250px;
 }
+#remSongs{
+	margin-bottom: 30px;
+}
 .remSong{
 	display: inline-block;
 	text-align: center;

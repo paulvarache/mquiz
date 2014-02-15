@@ -46,7 +46,7 @@ var GameIO = function(salons, users, httpServer){
 		socket.on('ready', function(){
 			me.ready = true;
 			if(salon.allUsersReady()){
-				nextSong(true, salon);
+				nextSong(true, me, salon);
 			}
 		});
 		socket.on('stop', function(data){
@@ -61,10 +61,10 @@ var GameIO = function(salons, users, httpServer){
 					clearInterval(salon.getInterval());
 					if(salon.isLastSong()){
 						io.sockets.emit('winner', me, true);
-						gameEnd(salon);
+						gameEnd(me, salon);
 					}else{
 						io.sockets.emit('winner', me, false);
-						nextSong(false, salon);
+						nextSong(false, me, salon);
 					}
 					winner = true;
 				}else{
@@ -88,22 +88,22 @@ var GameIO = function(salons, users, httpServer){
 		});
 
 		socket.on('replay', function(){
-			me.ready = false;
-			salon.reinit();
-		})
+			me.points = 0;
+			me.founds = '';
+		});
 
 	});
 
-	function autoNext(salon){
+	function autoNext(me, salon){
 		io.sockets.emit('winner', {pseudo : "personne"});
 		if(salon.isLastSong()){
-			gameEnd(salon);
+			gameEnd(me, salon);
 		}else{
-			nextSong(false, salon);
+			nextSong(false, me, salon);
 		}
 	}
 
-	function nextSong(first, salon){
+	function nextSong(first, me, salon){
 		first = typeof first !== 'undefined' ? first : false;
 		var wait = first ? 8000 : 7000;
 		salon.setStatus('next-song');
@@ -113,14 +113,15 @@ var GameIO = function(salons, users, httpServer){
 			io.sockets.emit('play', salon.getCurrentSongIndex());
 			salon.setStatus('playing');
 			salon.setInterval(setInterval(function(){
-				autoNext(salon);
+				autoNext(me, salon);
 			}, 60000));
 		}, wait);
 	}
 
-	function gameEnd(salon){
+	function gameEnd(me, salon){
 		io.sockets.emit('game-end');
 		salon.setStatus('scores');
+		salon.init();
 	}
 }
 

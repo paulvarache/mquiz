@@ -13,11 +13,39 @@ var crypto = require('crypto');
 var config = require('konphyg')(__dirname + '/../config');
 var s3Config = config('amazons3');
 var lastfmConfig = config('lastfm');
+var appConfig = config('app');
 var knox = require('knox');
 var mm = require('musicmetadata');
 var fs = require('fs');
 var restify = require('restify');
 var async = require('async');
+
+var prepareSongs = function(doc, prepend){
+	prepend = prepend || '';
+	var prepareSong = function(doc){
+		console.log(doc);
+		doc.shortTitle = doc.title;
+		if(doc.title.length > 16){
+			doc.shortTitle = doc.title.substr(0, 13);
+			doc.shortTitle += '...';
+		}
+		doc.shortArtist = doc.artist;
+		if(doc.artist.length > 16){
+			doc.shortArtist = doc.artist.substr(0, 13);
+			doc.shortArtist += '...';
+		}
+		if(doc.cover === ''){
+			doc.cover = prepend + appConfig.defaultCover;
+		}
+	}
+	if( Object.prototype.toString.call( doc ) === '[object Array]' ) {
+	    for(var i = 0; i < doc.length; i++){
+	    	prepareSong(doc[i]);
+	    }
+	}else{
+		prepareSong(doc);
+	}
+};
 
 /*
  * GET home page.
@@ -53,7 +81,9 @@ exports.play = function(req, res){
 	}else{
 		if(salon.getConnectedUsers() + 1 === salon.getMaxUsers() && salon.getType() !== 'custom'){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
-			req.app.locals.salons[nSalon.getId()] = nSalon;
+			nSalon.init(function(){
+				req.app.locals.salons[nSalon.getId()] = nSalon;
+			});
 		}
 		return res.render('play', {salonid : req.params.salonid, me : req.session.user, songs : salon.getSonglist(), bucket: s3Config.bucket, navbarInfo : {user : req.session.user}});
 	}
@@ -86,6 +116,7 @@ exports.songlist = function(req, res){
  */
 exports.songdetails = function(req, res){
 	req.app.locals.Song.findById(req.params.songid, function(err, doc){
+		prepareSongs(doc, '../');
 		return res.render('partials/songdetails', {song: doc, layout : null});
 	});
 }
@@ -186,7 +217,9 @@ exports.songs = function(req, res){
 			res.redirect('/admin/playlists');
 		}else{
 			req.app.locals.Song.findByPlaylistId(playlist.id, function(err, docs){
+				prepareSongs(docs, '../../');
 				req.app.locals.Song.findNotInPlaylist(playlist.id, function(err, others){
+					prepareSongs(others, '../../');
 					res.render('songs', {
 						songs : others,
 						currentPlaylist : docs,
@@ -220,6 +253,7 @@ exports.songsPost = function(req, res){
  */
 exports.song = function(req, res){
 	req.app.locals.Song.find().exec(function(err, docs){
+		prepareSongs(docs, '../');
 		res.render('song', {
 			songs : docs,
 			admin: true,
@@ -307,15 +341,15 @@ exports.songUpload = function(req, res){
 					 + lastfmConfig.api_key
 					 + '&format=json',
 					function(err, requset, response, obj){
-						var image = null,
-							title =null,
+						var image = '../'+appConfig.defaultCover,
+							title = null,
 							artist = null;
 						if(typeof obj.error !== 'undefined'){
-							image = '../cover/default.png';
 							title = req.files.songs.name;
 							artist = '';
 						}else{
 							if(typeof obj.track.album !== 'undefined'){
+								console.log(obj.track.album);
 								image = obj.track.album.image[3]['#text'];
 							}
 							title = obj.track.name;
@@ -324,12 +358,12 @@ exports.songUpload = function(req, res){
 						res.render('partials/uploadDetails', {song: {id: fId, artist: artist, title: title, cover: image, okToUpload: true}, layout: null});
 					});
 			}else{
-				res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: '../cover/default.png', okToUpload: true}, layout: null});
+				res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: image, okToUpload: true}, layout: null});
 			}
 		});
 	}else{
 		fs.unlinkSync(req.files.song.path);
-		res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: '../cover/default.png', okToUpload: false}, layout: null});
+		res.render('partials/uploadDetails', {song: {id: fId, artist: '', title: req.files.songs.name, cover: image, okToUpload: false}, layout: null});
 	}
 }
 
@@ -357,9 +391,11 @@ exports.salons = function(req, res){
 
 exports.salonsPost = function(req, res){
 	var salon = new req.app.locals.Salon(req.body.name, 'custom', req.body.players, req.body.playlist, req.body.songlistLength, req.body.password);
-	req.app.locals.salons[salon.getId()] = salon;
-	//get connected user and move him from app to salon
-	res.redirect('/play/'+salon.getId());
+	salon.init(function(){
+		req.app.locals.salons[salon.getId()] = salon;
+		//get connected user and move him from app to salon
+		res.redirect('/play/'+salon.getId());
+	});
 }
 
 exports.checkPasswd = function(req, res){
@@ -402,4 +438,30 @@ exports.adminLoginPost = function(req, res){
 
 exports.apropos = function(req, res){
 	res.render('apropos', {navbarInfo : {user : req.session.user}});
+}
+
+exports.getCover = function(req, res){
+	var title = req.params.title;
+	var artist = req.params.artist;
+	console.log(artist);
+	console.log(title);
+	var client = restify.createJsonClient({
+					url: lastfmConfig.url
+				});
+	client.get(
+		'/2.0/?method=track.getinfo&artist='
+		 + encodeURIComponent(artist)
+		 + '&track='
+		 + encodeURIComponent(title)
+		 + '&api_key='
+		 + lastfmConfig.api_key
+		 + '&format=json',
+		function(err, requset, response, obj){
+			console.log(obj);
+			var image = '../'+appConfig.defaultCover;
+			if(typeof obj.error === 'undefined' && typeof obj.track.album !== 'undefined'){
+				image = obj.track.album.image[3]['#text'];
+			}
+			res.json(200, {cover: image});
+		});
 }

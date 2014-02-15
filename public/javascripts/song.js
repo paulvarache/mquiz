@@ -20,27 +20,6 @@ $(document).ready(function(){
 		});
 	});
 
-
-	$('#title').focus(function(){
-		$('#customTitle').prop('disabled', true);
-		$('#customTitle').val('');
-	});
-
-	$('#title').focusout(function(){
-		$('#customTitle').prop('disabled', false);
-		$(this).prop('disabled', false);
-	});
-
-	$('#customTitle').focusout(function(){
-		$('#title').prop('disabled', false);
-		$(this).prop('disabled', false);
-	});
-
-	$('#customTitle').focus(function(){
-		$('#title').prop('disabled', true);
-		$('#title').val('');
-
-	});
 	var processHandling = function(data){
 		console.log(data);
 	};
@@ -57,6 +36,18 @@ $(document).ready(function(){
 						$('#songListPanel').fadeOut();
 					}
 				});
+			});
+		});
+		li.click(function(e){
+			e.preventDefault();
+			id = $(this).attr('id').substr(5, $(this).attr('id').length);
+			var title = $(this).find('#title').val();
+			var artist = $(this).find('#artist').val();
+			console.log(artist);
+			var div = $(this);
+			$.getJSON('/admin/getCover/'+encodeURIComponent(artist)+'/'+encodeURIComponent(title), function(data){
+				console.log(data);
+				div.find('#cover').attr('src', data.cover);
 			});
 		});
 		$('#songList').append(li);
