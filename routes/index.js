@@ -51,7 +51,7 @@ exports.play = function(req, res){
 	if(salon.isFull()){
 		res.redirect('/salons');
 	}else{
-		if(salon.getConnectedUsers() + 1 == salon.getMaxUsers() && salon.getType() !== 'custom'){
+		if(salon.getConnectedUsers() + 1 === salon.getMaxUsers() && salon.getType() !== 'custom'){
 			var nSalon = new req.app.locals.Salon(salon.getName(), 'duplicate', 2, salon.getSonglistId(), 5);
 			req.app.locals.salons[nSalon.getId()] = nSalon;
 		}
@@ -256,11 +256,7 @@ exports.addMultipleSong = function(req, res){
 	async.each(songs, function(item, callback){
 		var path = tmpFiles[item.id];
 		var parser = mm(fs.createReadStream(path), {duration: true});
-		parser.on('done', function(){
-			console.log('done');
-		});
 		parser.on('metadata', function(tags){
-			console.log('metadata');
 			var song = req.app.locals.Song({
 				title : item.title,
 				artist : item.artist,
@@ -273,7 +269,6 @@ exports.addMultipleSong = function(req, res){
 					'Content-Type': 'audio/mpeg',
 					'x-amz-acl': 'public-read'
 				};
-				console.log(doc.id);
 				s3.putFile(path, doc.id + '.mp3', s3Headers, function(err, response){
 					console.log('One file transfered');
 					callback();

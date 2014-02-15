@@ -1,9 +1,53 @@
 body{
 	height: 100vh;
 }
-
 .waiting-page{
 	width: 100vw;
 	height: 100vh;
 	background-color: rgba(255,255,255,0.5);
+	position: absolute;
+	top:0;
+	z-index: 100;
+	-webkit-animation: fadeWaiter 2s infinite;
+	animation: fadeWaiter 2s infinite;
+}
+.waiting-message{
+	position: absolute;
+	text-align: center;
+	width: 500px;
+	height: 100px;
+	left: 50%;
+	top: 50%;
+	margin-top: -50px;
+	margin-left: -250px;
+}
+.remSong{
+	display: inline-block;
+	text-align: center;
+	width: 70px;
+	position: relative;
+}
+.appPanel, #remSongs{
+	text-align: center;
+	background-color: transparent;
+}
+.appPanel{
+	display: none;
+}
+.navbar{
+	margin: 0;
+}
+table th{
+	text-align: center;
+}
+
+@-webkit-keyframes fadeWaiter{
+	0%{background-color: rgba(255,255,255,0.5)}
+	50%{background-color: rgba(255,255,255,0.7)}
+	100%{background-color: rgba(255,255,255,0.5)}
+}
+@keyframes fadeWaiter{
+	0%{background-color: rgba(255,255,255,0.5)}
+	50%{background-color: rgba(255,255,255,0.7)}
+	100%{background-color: rgba(255,255,255,0.5)}
 }

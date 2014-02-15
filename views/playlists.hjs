@@ -29,5 +29,5 @@
     </div>
 </div>
 {{#yield-javascripts}}
-<script type="text/javascript" src="javascripts/playlist.js"></script>
+<script type="text/javascript" src="../javascripts/playlist.js"></script>
 {{/yield-javascripts}}

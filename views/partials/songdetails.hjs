@@ -1,7 +1,7 @@
-<li class="list-group-item songDetails">
-    <img class="thumbnail cover" id="cover" src="{{song.cover}}" />
-    <h5>{{song.title}}</h5>
-    <h6>{{song.artist}}</h6>
-    <h6>{{song.year}}</h6>
-    <h6 id='foundby'></h6>
-</li>
+<div class="list-group-item song songInfo" id="{{song.id}}" style="background: url('{{song.cover}}');">
+	<div class='songInfoText'>
+		<h5>{{song.title}}</h5>
+		<h6>{{song.artist}}</h6>
+		<h6 id="found-by"></h6>
+	</div>
+</div>

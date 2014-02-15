@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-controller='SalonCtrl'>
 	<div class='row-fluid'>
 		<div class='col-md-3'>
 			<div class="panel panel-default">
@@ -9,7 +9,7 @@
 					{{#users}}
 					<li class="list-group-item">
 						<div class="thumbnail avatar">{{{avatar}}}</div>
-						{{pseudo}}
+						<span>{{pseudo}}</span>
 					</li>
 					{{/users}}
 				</ul>

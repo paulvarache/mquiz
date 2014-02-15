@@ -46,9 +46,7 @@
         <script type="text/javascript" src="/javascripts/jquery.validate.js"></script>
         <script type="text/javascript" src="/javascripts/additional-methods.js"></script>
         <script type="text/javascript" src="/javascripts/validate.localization/messages_fr.js"></script>
-        <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
         <script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
         {{{ yield-javascripts }}}
-
     </body>
 </html>

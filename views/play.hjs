@@ -1,32 +1,41 @@
-<div class="waiting-page" id="waiting-page"></div>
-<div class='app' id='app' style='display: none'>
+{{#yield-angular}}
+ng-app='mquiz'
+{{/yield-angular}}
+<div class="waiting-page" id="waiting-page">
+    <h1 class="waiting-message">Chargement...</h1>
+</div>
+<div class='app' id='app'>
     <div id="score-plus" class='text-success score-plus' style="display: none">+1</div>
     <div class="row">
         <div class="col-md-2">
-        	<h3>Liste des participants</h3>
-				<ul id="usrlist" class="unstyled" id="usrlist">
-
-				</ul>
+				<ul id="usrlist" class="unstyled" id="usrlist"></ul>
         </div>
         <div class="col-md-8">
             <div class="container-fluid" id="game">
                 <div id="remSongs">
                     {{#songs}}
-                        <img id="rem-{{id}}" data-toggle="tooltip" data-placement="top" class="remSong img-responsive" src="/images/qmark.png" width="70px" title=" "/>
+                        <div id="rem-{{id}}" data-toggle="tooltip" data-placement="top" class="remSong img-responsive" title="?">
+                            <img src="/images/qmark.png" width="70px"/>
+                            <div class="wrapper" data-anim="base wrapper">
+                              <div id='circle-left' class="circle left" data-anim="base left"></div>
+                              <div id='circle-right' class="circle right" data-anim="base right"></div>
+                            </div>
+                            <div class='countdown' id='remCountdown'>60</div>
+                        </div>
                     {{/songs}}
                 </div>
                 <div id='before-play' class='appPanel'>
-                    <h3>Vous avez rejoint la partie. Pour commencer cliquez sur "READY !"</h3>
-                    <button class="btn btn-primary btn-lg" id="ready-btn">READY !</button>
+                    <h3>Ça va bientôt commencer. Dès que vous êtes prêts dites-le</h3>
+                    <button class="btn btn-primary btn-lg" id="ready-btn">Je suis prêt !</button>
                 </div>
-                <div id="playing" style="display: none;" class='appPanel'>
+                <div id="playing" class='appPanel'>
                     <h1 id="countdown"></h1>
                     <form id="response-form" class="form game-form" role="form">
                     <input type="text" class="form-control" id='response' name='response' placeholder='Votre réponse'/><br/>
-                        <button type="submit" class="btn btn-default btn-lg" id="submit-response" >STOP !</button>
+                        <button type="submit" class="btn btn-default btn-lg" id="submit-response" >Je sais, je sais !</button>
                     </form>
                 </div>
-                <div id="penalite" class="panel">
+                <div id="penalite" class="appPanel">
                 	<h2>Pénalité</h2>
                     <div class="progress progress-striped active">
                         <div id='penalite-bar' class="progress-bar progress-bar-danger" role="progressbar" aria-valuemin="0" aria-valuemax='100' aria-valuenow='100' style="width: 100%">
@@ -48,11 +57,10 @@
             </div>
         </div>
         <div class="col-md-2">
-            <h4>Dernières musiques</h4>
             <ul class="list-group" id="last-songs"></ul>
         </div>
     </div>
-    <div class='saySomething' id='saySomething'>
+    <div class='saySomething' id='saySomething' ng-controller='MsgCtrl'>
         <ul class="nav nav-tabs">
             <li class='active'><a href="#">Chat...</a></li>
         </ul>
@@ -75,7 +83,10 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/javascripts/app.js"></script>
     <script type="text/javascript" src="/javascripts/howler.js"></script>
+    <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
 {{/yield-javascripts}}
 {{#yield-stylesheets}}
     <link rel="stylesheet" href="/stylesheets/mquiz.css" />
+    <link rel="stylesheet" href="/stylesheets/play.css" />
+    <link rel="stylesheet" href="/stylesheets/radial.css" />
 {{/yield-stylesheets}}

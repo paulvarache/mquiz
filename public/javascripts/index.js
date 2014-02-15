@@ -3,7 +3,6 @@ $(document).ready(function(){
   $.get('https://api.github.com/repos/paulvarache/mquiz/git/refs/heads/master', function(data){
     var id = data.object.sha;
     $.get('https://api.github.com/repos/paulvarache/mquiz/git/commits/'+id, function(lastCommit){
-      console.log(lastCommit);
       $('#last-commit').html('Derniers ajouts: '+lastCommit.message);
     })
   })
@@ -75,3 +74,16 @@ $(document).ready(function(){
       }
   	});
 });
+
+ /*
+ * This function hide the default avatars when something is added to the gravatar input
+  */
+function defaultAvatarAutoHide(value){
+  var display = 'none';
+  if(value == ''){
+    display = 'inline-block';
+  }
+  $('.avatar, #ou').each(function(){
+    $(this).css('display', display);
+  });
+}

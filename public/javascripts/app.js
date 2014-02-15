@@ -1,25 +1,13 @@
 $(document).ready(function(){
 
-	$(".panel").hide();
-	showOnly('before-play', 'appPanel');
-
-	var resetScorePlusPosition = function(){
-		$('#score-plus').css('top', parseInt(window.innerHeight) / 2+'px').css('left', parseInt(window.innerWidth) / 2+'px');
-		$('#score-plus').css('margin-top', '-'+parseInt($('#score-plus').height()) / 2+'px').css('margin-left', '-'+parseInt($('#score-plus').width()) / 2+'px');
-		$('#score-plus').css('font-size', '100000%');
-	}
+	/*
+	* Préparation UI
+	*/
+	$('.appPanel').hide(function(){
+		showOnly('before-play', 'appPanel');
+	});
 
 	resetScorePlusPosition();
-
-	/*
-	* Connection to the io server
-	 */
-	var socket = io.connect('/');
-	var playing;
-	var mySongList;
-	var currentSong;
-	var audioList = {};
-	var playingId = null;
 
 	$('#saySomething li').click(function(e){
 		e.preventDefault();
@@ -33,7 +21,20 @@ $(document).ready(function(){
 			socket.emit('message', {message : message.val()});
 			message.val('');
 		}
-	})
+	});
+
+	/*
+	* Connection to the io server
+	 */
+	var socket = io.connect('/');
+	var playing;
+	var currentSong;
+	var audioList = {};
+	var playingId = null;
+	var countdownInterval = null;
+	var countdown = 60;
+
+	// There are two vars defined by the view: myId and salonId
 
 	/*
 	* When the ready button is clicked, the server is informed and the user
@@ -64,24 +65,33 @@ $(document).ready(function(){
 		location.reload();
 	});
 
-	socket.on('logged', function(myId, songs, startPositions){
+	/*
+	* The login response from the server
+	* This is where we prepare the audio object with howler
+	*/
+	socket.on('logged', function(songs, startPositions){
 		var url = $('#s3URI').val();
 		for(var k in songs){
 			var start = startPositions[songs[k]._id] * 1000;
 			var ap = new Howl({
 				urls : [url+songs[k]._id+'.mp3'],
 				sprite: {
-					def: [start, startPositions[songs[k]._id]+60000]
-				}
+					def: [start, startPositions[songs[k]._id]+60000] //Defines a default 60s sprite 
+				},
+				buffer: true
 			});
-			audioList[songs[k]._id] = ap;
+			audioList[songs[k]._id] = ap; //Add the new Howl in the audioList object
 		}
 	});
 
+	/*
+	* When a message return from the server
+	* This is essentially UI stuff
+	*/
 	socket.on('message', function(user, message){
 		$('#popover'+user.id).attr('data-content', message);
 		$('#popover'+user.id).popover('show');
-		setTimeout(function(){
+		setTimeout(function(){ // 2secs after the message has been displayed whe hide it
 			$('#popover'+user.id).popover('hide');
 		}, 2000);
 		var nMessage = '<div class="message"><strong>'+user.pseudo+': </strong>'+message+'</div>';
@@ -96,8 +106,9 @@ $(document).ready(function(){
 		$.get('user/'+user.id+'/salon/'+salonId, function(data){
 			if(user.id == myId){
 				$("#usrlist").prepend(data);
-				$('#waiting-page').remove();
-				$('#app').fadeIn();
+				$('#waiting-page').fadeOut(function(){
+					$(this).remove();
+				});
 			}else{
 				$("#usrlist").append(data);
 			}
@@ -123,6 +134,15 @@ $(document).ready(function(){
 	 */
 	socket.on('play', function(song_id){
 		$('#rem-'+song_id).tooltip('show');
+		$('#rem-'+song_id).find('img').fadeOut(function(){
+			$('#rem-'+song_id).find('div').css('-webkit-animation-play-state', 'running');
+			$('#circle-right #circle-left').css('-webkit-animation-play-state', 'running');
+			$('#remCountdown').fadeIn();
+			countdownInterval = setInterval(function(){
+				countdown--;
+				$('#remCountdown').html(countdown);
+			},1000);
+		})
 		if(myId != ''){
 			console.log('PLAY');
 			currentSong = song_id;
@@ -131,6 +151,7 @@ $(document).ready(function(){
 			playing = audioList[song_id];
 			playingId = song_id;
 			playing.play('def');
+			$('#response').focus();
 		}
 	});
 
@@ -167,6 +188,7 @@ $(document).ready(function(){
 			showOnly('penalite', 'appPanel');
 			setTimeout(function(){
 				showOnly('playing', 'appPanel');
+				$('#response').focus();
 			},2000);
 		}
 	});
@@ -175,21 +197,31 @@ $(document).ready(function(){
 		if(myId != ''){
 			console.log('CONTINUE');
 			$('#response').fadeIn();
-			$('#submit-response').html('STOP').prop('disable', false);
-			playing.play();
+			$('#submit-response').html('Je sais, je sais !').prop('disable', false);
+			playing.play('def');
 		}
 	});
 
-	socket.on('winner', function(winner){
+	socket.on('winner', function(winner, end){
 		if(myId != ''){
+			$('#response').val('');
 			console.log('WINNER');
 			$.get('/songdetails/'+currentSong, function(data){
 				html = $(data);
-				html.find('#foundby').html('Trouvé par '+winner.pseudo);
+				html.find('#found-by').html('Trouvé par '+winner.pseudo);
 				$('#last-songs').hide().prepend(html[0]).fadeIn();
 			});
+			clearInterval(countdownInterval);
+			countdown = 60;
 			if(winner.id === myId){
-				$('#rem-'+playingId).attr('src', '/images/check.png');
+				var img = $('#rem-'+playingId).find('img');
+				var div = $('#rem-'+playingId).find('div');
+				img.attr('src', '/images/check.png');
+				div.fadeOut(function(){
+					$(this).remove();
+					img.fadeIn();
+				});
+				$('#remCountdown').fadeOut();
 				$('#score-plus').fadeIn().animate({"font-size" : "1000%", "margin-top": "-200px", "margin-left": "-80px"}, {duration: 500, complete: function(){
 					setTimeout(function(){
 						$('#score-plus').fadeOut(function(){
@@ -198,12 +230,23 @@ $(document).ready(function(){
 					},3000);
 				}});
 			}else{
-				$('#rem-'+playingId).attr('src', '/images/wrong.png');
+				var img = $('#rem-'+playingId).find('img');
+				var div = $('#rem-'+playingId).find('div');
+				img.attr('src', '/images/wrong.png');
+				div.fadeOut(function(){
+					$(this).remove();
+					img.fadeIn();
+				});
+				$('#remCountdown').fadeOut();
 			}
 			$('#rem-'+playingId).tooltip('hide').attr('data-toggle', '');
-			playing.pause();
-			delete playing;
-			showOnly('wait', 'appPanel');
+			if(!end){
+				setTimeout(function(){
+					playing.pause();
+					delete playing;
+				}, 6500);
+				showOnly('wait', 'appPanel');
+			}
 		}
 	});
 
@@ -221,7 +264,7 @@ $(document).ready(function(){
 		if(myId != ''){
 			showOnly('wait', 'appPanel');
 			$('#response').fadeIn();
-			$('#submit-response').html('STOP').prop('disable', false);
+			$('#submit-response').html('Je sais, je sais !').prop('disable', false);
 		}
 	});
 
@@ -250,43 +293,23 @@ $(document).ready(function(){
 });
 
 /*
-* This function countdown to a given number and execute a callback every second
-* and at the end.
- */
-function countdown(current, passage, end){
-	if(current != 0){
-		setTimeout(function(){countdown(current - 1, passage, end);}, 1000);
-		passage(current);
-	} else {
-		end();
-	}
-}
+* Fonctions
+*/
 
-function animateBar(bar, duration){
-	var interval = setInterval(function(){
-		bar.attr('aria-valuenow', parseInt(bar.attr('aria-valuenow')) + (100 / duration))
-	}, (duration * 1000) / 10);
-	setTimeout(function(){
-		clearInterval(interval);
-	}, duration * 1000);
-}
-
- /*
- * This function hide the default avatars when something is added to the gravatar input
-  */
-function defaultAvatarAutoHide(value){
-	var display = 'none';
-	if(value == ''){
-		display = 'inline-block';
-	}
-	$('.avatar, #ou').each(function(){
-		$(this).css('display', display);
-	});
-}
-
+//Hide all the elements which class is multi and show the element with the id
 function showOnly(id, multi){
-	$('#'+id).fadeIn();
+	console.log('SHOW ONLY: '+id);
 	$('.'+multi).not('#'+id).each(function(){
+		console.log(this);
 		$(this).fadeOut();
+	}).promise().done(function(){
+		$('#'+id).fadeIn();
 	});
+}
+
+//Resets the position of the +1 
+var resetScorePlusPosition = function(){
+	$('#score-plus').css('top', parseInt(window.innerHeight) / 2+'px').css('left', parseInt(window.innerWidth) / 2+'px');
+	$('#score-plus').css('margin-top', '-'+parseInt($('#score-plus').height()) / 2+'px').css('margin-left', '-'+parseInt($('#score-plus').width()) / 2+'px');
+	$('#score-plus').css('font-size', '100000%');
 }

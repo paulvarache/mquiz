@@ -46,10 +46,6 @@ body {
 .cover{
 	width: 100px;
 }
-.appPanel, #remSongs{
-	text-align: center;
-	background-color: transparent;
-}
 div.sortable-placeholder{
 	display: inline-block;
 	border : 1px dashed grey;
@@ -105,10 +101,6 @@ div.sortable-placeholder{
 }
 .inline-input{
 	width: 50%;
-}
-.remSong{
-	display: inline-block;
-	text-align: center;
 }
 .app{
 	max-height: 100vh;

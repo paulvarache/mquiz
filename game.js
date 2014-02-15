@@ -35,12 +35,11 @@ var Salon = function(name, type, players, songlistId, songlistLength, password){
 		.exec(function(err, songs){
 			songlist = shuffle(songs);
 			songlist = songlist.slice(0, songlistLength);
-			console.log(songlist);
 			for(var i = 0; i < songlist.length; i++){
 				var startPosition = 0
 				if(songlist[i].duration > 60){
 					var limitMax = songlist[i].duration - 60;
-					startPosition = Math.floor((Math.random() * limitMax) + 1);
+					startPosition = Math.floor((Math.random() * limitMax) + 1); //Random start point for the song 
 				}
 				startPositions[songlist[i].id] = startPosition;
 			}

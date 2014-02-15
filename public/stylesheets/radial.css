@@ -1,0 +1,95 @@
+.countdown{
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  font-size: 40px;
+  top: 6px;
+  display: none;
+  margin-top: -35px;
+}
+
+
+.wrapper {
+  width: 70px; /* Set the size of the progress bar */
+  height: 70px;
+  position: absolute; /* Enable clipping */
+  clip: rect(0px, 70px, 70px, 35px); /* Hide half of the progress bar */
+  top: 0;
+  margin-top: -35px;
+}
+/* Set the sizes of the elements that make up the progress bar */
+.circle {
+  width: 70px;
+  height: 70px;
+  border: 10px solid #90EE90;
+  border-radius: 50px;
+  position: absolute;
+  clip: rect(0px, 35px, 70px, 0px);
+}
+
+/* Using the data attributes for the animation selectors. */
+/* Base settings for all animated elements */
+div[data-anim~=base] {
+  -webkit-animation-iteration-count: 1;  /* Only run once */
+  -webkit-animation-fill-mode: forwards; /* Hold the last keyframe */
+  -webkit-animation-timing-function:linear; /* Linear animation */
+  -webkit-animation-play-state: paused;
+}
+
+.wrapper[data-anim~=wrapper] {
+  -webkit-animation-duration: 0.01s; /* Complete keyframes asap */
+  -webkit-animation-delay: 30s; /* Wait half of the animation */
+  -webkit-animation-name: close-wrapper; /* Keyframes name */
+  -webkit-animation-play-state: paused;
+
+}
+
+.circle[data-anim~=left] {
+  -webkit-animation-duration: 60s; /* Full animation time */
+  -webkit-animation-name: left-spin;
+  -webkit-animation-play-state: paused;
+
+}
+
+.circle[data-anim~=right] {
+  -webkit-animation-duration: 60s; /* Half animation time */
+  -webkit-animation-name: right-spin;
+  -webkit-animation-play-state: paused;
+
+}
+
+/* Rotate the right side of the progress bar from 0 to 180 degrees */
+@-webkit-keyframes right-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    border-color: #90EE90;
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    border-color: #FFFFCC;
+  }
+  100% {
+    -webkit-transform: rotate(180deg);
+    border-color: #ED2939;
+  }
+}
+/* Rotate the left side of the progress bar from 0 to 360 degrees */
+@-webkit-keyframes left-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    border-color: #90EE90;
+  }
+  50% {
+    border-color: #FFFFCC;
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    border-color: #ED2939;
+  }
+}
+/* Set the wrapper clip to auto, effectively removing the clip */
+@-webkit-keyframes close-wrapper {
+  to {
+    clip: rect(auto, auto, auto, auto);
+  }
+}
